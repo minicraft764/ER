@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>مزامنة البيانات</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --primary:#2563eb;--primary-light:#3b82f6;--primary-dark:#1d4ed8;
+  --secondary:#10b981;--secondary-dark:#059669;
+  --accent:#f59e0b;--danger:#ef4444;--danger-bg:#fef2f2;
+  --bg:#f1f5f9;--bg-secondary:#f8fafc;
+  --card:#ffffff;--card-border:#e2e8f0;
+  --text:#0f172a;--text-secondary:#475569;--text-muted:#94a3b8;
+  --input-bg:#f8fafc;--input-border:#cbd5e1;
+  --input-focus-ring:rgba(37,99,235,0.15);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg:0 12px 32px rgba(0,0,0,0.12);
+  --shadow-xl:0 20px 48px rgba(0,0,0,0.18);
+  --radius-sm:8px;--radius:12px;--radius-lg:16px;--radius-xl:20px;--radius-2xl:24px;
+  --header-bg:linear-gradient(135deg,#1e3a5f 0%,#0f2b47 100%);
+}
+
+[data-theme="dark"]{
+  --bg:#0f172a;--bg-secondary:#1e293b;
+  --card:#1e293b;--card-border:#334155;
+  --text:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;
+  --input-bg:#1e293b;--input-border:#475569;
+  --input-focus-ring:rgba(59,130,246,0.2);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.3);--shadow-md:0 4px 12px rgba(0,0,0,0.35);
+  --shadow-lg:0 12px 32px rgba(0,0,0,0.4);
+  --header-bg:linear-gradient(135deg,#0f2744 0%,#081a2e 100%);
+  --danger-bg:rgba(239,68,68,0.15);
+}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Naskh Arabic',Tahoma,sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;min-height:100dvh;overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;
+  transition:background 0.3s,color 0.3s;
+}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+input,textarea,select{font-family:inherit;color:var(--text)}
+img{display:block;max-width:100%}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{opacity:0;transform:scale(0.85)}60%{transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.15)}66%{transform:translate(-20px,20px) scale(0.9)}}
+@keyframes badgePop{0%{transform:scale(0)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+.login-screen{
+  min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;
+  padding:20px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#0c1a2d 0%,#162845 30%,#0f2038 70%,#0a1525 100%);
+}
+.login-screen::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 20%,rgba(37,99,235,0.18) 0%,transparent 50%),
+             radial-gradient(ellipse at 80% 80%,rgba(16,185,129,0.15) 0%,transparent 50%),
+             radial-gradient(ellipse at 50% 0%,rgba(245,158,11,0.08) 0%,transparent 40%);
+}
+.login-screen::after{
+  content:'';position:absolute;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(59,130,246,0.15) 0%,transparent 70%);
+  animation:orbFloat 8s ease-in-out infinite;top:10%;right:10%;
+}
+.login-card{
+  background:rgba(255,255,255,0.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-radius:var(--radius-2xl);padding:36px 28px;width:100%;max-width:380px;
+  box-shadow:var(--shadow-xl);position:relative;z-index:1;
+  animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+[data-theme="dark"] .login-card{background:rgba(30,41,59,0.94)}
+.login-icon{
+  width:72px;height:72px;background:linear-gradient(135deg,var(--primary),var(--secondary));
+  border-radius:18px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 28px rgba(37,99,235,0.35);
+  animation:popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+}
+.login-icon svg{width:34px;height:34px;fill:white}
+.login-title{
+  text-align:center;font-size:26px;font-weight:700;margin-bottom:6px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:fadeUp 0.5s ease 0.2s both;
+}
+.login-subtitle{text-align:center;color:var(--text-secondary);font-size:14px;margin-bottom:28px;animation:fadeUp 0.5s ease 0.28s both}
+.field-group{margin-bottom:18px;animation:fadeUp 0.5s ease both}
+.field-group:nth-child(1){animation-delay:0.36s}
+.field-group:nth-child(2){animation-delay:0.44s}
+.field-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.field-group input,.field-group textarea,.field-group select{
+  width:100%;padding:13px 14px;border:2px solid var(--input-border);
+  border-radius:var(--radius);font-size:15px;background:var(--input-bg);
+  transition:border-color 0.2s,box-shadow 0.2s;color:var(--text);
+}
+.field-group input:focus,.field-group textarea:focus,.field-group select:focus{
+  outline:none;border-color:var(--primary);box-shadow:0 0 0 4px var(--input-focus-ring);
+}
+.field-group textarea{resize:vertical;min-height:70px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;font-weight:600;transition:all 0.15s}
+.btn:active{transform:scale(0.97)}
+.btn-primary{
+  width:100%;padding:15px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;border-radius:var(--radius);font-size:16px;position:relative;overflow:hidden;
+  animation:fadeUp 0.5s ease 0.52s both;
+}
+.btn-primary::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
+  left:-100%;transition:left 0.5s;
+}
+.btn-primary:active::after{left:100%}
+.btn-primary:disabled{opacity:0.55;pointer-events:none}
+.login-error{
+  background:var(--danger-bg);border:1px solid #fecaca;color:var(--danger);
+  padding:12px;border-radius:var(--radius);margin-top:14px;text-align:center;
+  font-size:13px;display:none;animation:shake 0.45s;
+}
+
+.app-shell{display:none;min-height:100vh;min-height:100dvh;animation:fadeUp 0.3s}
+
+.app-header{
+  background:var(--header-bg);color:#fff;padding:12px 16px;
+  position:sticky;top:0;z-index:100;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,0.2);
+  transition:background 0.3s;
+}
+.header-left,.header-right{display:flex;align-items:center;gap:8px}
+.header-title{font-size:19px;font-weight:700;white-space:nowrap}
+.icon-btn{
+  width:38px;height:38px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,0.15);border:none;color:#fff;
+  display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+  position:relative;
+}
+.icon-btn:active{background:rgba(255,255,255,0.28);transform:scale(0.92)}
+.icon-btn svg{width:18px;height:18px}
+
+.notif-badge{
+  position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;
+  background:var(--danger);color:#fff;border-radius:9px;font-size:10px;
+  font-weight:700;display:flex;align-items:center;justify-content:center;
+  padding:0 5px;animation:badgePop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 2px 6px rgba(239,68,68,0.4);
+}
+.notif-badge:empty{display:none}
+
+.btn-logout{
+  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+  color:#fff;padding:7px 14px;border-radius:var(--radius-sm);
+  font-size:13px;font-weight:600;margin-inline-start:4px;
+}
+.btn-logout:active{background:rgba(255,255,255,0.22);transform:scale(0.96)}
+
+.search-bar{
+  display:none;background:var(--card);padding:12px 16px;
+  border-bottom:1px solid var(--card-border);box-shadow:var(--shadow-sm);
+  transition:background 0.3s;animation:fadeDown 0.2s;
+}
+.search-bar input{
+  width:100%;padding:11px 14px;border:2px solid var(--input-border);
+  border-radius:var(--radius);font-size:15px;background:var(--input-bg);
+  color:var(--text);transition:border-color 0.2s,box-shadow 0.2s;
+}
+.search-bar input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px var(--input-focus-ring)}
+
+.entries-container{padding:4px 12px;padding-bottom:90px}
+
+.empty-state{text-align:center;padding:60px 20px;animation:fadeUp 0.4s}
+.empty-state svg{width:72px;height:72px;color:var(--text-muted);margin-bottom:16px}
+.empty-state h3{color:var(--text-secondary);font-size:17px;margin-bottom:6px}
+.empty-state p{color:var(--text-muted);font-size:13px}
+
+.entry-row{
+  background:var(--card);border-bottom:1px solid var(--card-border);
+  padding:10px 8px;animation:slideInRight 0.25s both;
+  position:relative;transition:background 0.15s;
+}
+.entry-row:nth-child(1){animation-delay:0s}
+.entry-row:nth-child(2){animation-delay:0.04s}
+.entry-row:nth-child(3){animation-delay:0.08s}
+.entry-row:nth-child(4){animation-delay:0.12s}
+.entry-row:nth-child(5){animation-delay:0.16s}
+.entry-row:nth-child(n+6){animation-delay:0.2s}
+.entry-row:first-of-type{border-top:1px solid var(--card-border)}
+.entry-row:active{background:var(--bg-secondary)}
+
+.entry-row-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:4px}
+.entry-row-names{flex:1;min-width:0}
+.entry-row-name{font-size:14px;font-weight:600;color:var(--text);line-height:1.3}
+.entry-row-sub{font-size:12px;color:var(--text-secondary);margin-top:1px}
+
+.entry-row-actions{display:flex;gap:2px;flex-shrink:0;opacity:0.5;transition:opacity 0.15s}
+.entry-row:active .entry-row-actions,.entry-row:hover .entry-row-actions{opacity:1}
+.row-action-btn{
+  width:30px;height:30px;border-radius:var(--radius-sm);border:none;
+  display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+  color:var(--text-muted);background:transparent;
+}
+.row-action-btn:active{transform:scale(0.88)}
+.row-action-btn.edit-btn{color:#2563eb}
+.row-action-btn.edit-btn:active{background:rgba(37,99,235,0.12)}
+.row-action-btn.del-btn{color:#ef4444}
+.row-action-btn.del-btn:active{background:var(--danger-bg)}
+.row-action-btn svg{width:14px;height:14px}
+
+.entry-row-details{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:11px;color:var(--text-secondary);margin-bottom:2px}
+.entry-row-detail{white-space:nowrap}
+.entry-row-detail strong{color:var(--text-muted);font-weight:500}
+.entry-row-notes{font-size:11px;color:var(--text-muted);margin-bottom:4px;line-height:1.4}
+
+.entry-row-images{display:flex;gap:6px}
+.entry-row-images img{
+  width:40px;height:40px;object-fit:cover;border-radius:6px;
+  border:1px solid var(--card-border);cursor:pointer;transition:transform 0.15s;
+}
+.entry-row-images img:active{transform:scale(1.2)}
+
+.fab-settings {
+  position: fixed;
+  bottom: 22px;
+  width: 50px; height: 50px; border-radius: 50%;
+  background: var(--card); border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-lg); display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary); z-index: 150;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* Force button to the Right in Arabic */
+[dir="rtl"] .fab-settings {
+  right: 20px;
+  left: auto;
+}
+
+/* Force button to the Left in English */
+[dir="ltr"] .fab-settings {
+  left: 20px;
+  right: auto;
+}
+.fab-settings:active{transform:scale(0.88)}
+.fab-settings svg{width:22px;height:22px;transition:transform 0.3s}
+
+.sheet-overlay{
+  position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0);
+  pointer-events:none;transition:background 0.2s;
+}
+.sheet-overlay.open{
+  background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  pointer-events:auto;
+}
+.sheet{
+  position:fixed;bottom:0;left:0;right:0;z-index:210;
+  background:var(--card);border-radius:var(--radius-2xl) var(--radius-2xl) 0 0;
+  padding:24px 20px;padding-bottom:max(24px,env(safe-area-inset-bottom,20px));
+  max-height:82vh;overflow-y:auto;transform:translateY(100%);
+  transition:transform 0.25s cubic-bezier(0.32,0.72,0,1);box-shadow:var(--shadow-xl);
+  will-change:transform;
+}
+.sheet.open{transform:translateY(0)}
+.sheet-handle{width:36px;height:5px;border-radius:3px;background:var(--card-border);margin:0 auto 20px}
+.sheet-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.sheet-title{font-size:20px;font-weight:700}
+.sheet-close{
+  width:34px;height:34px;border-radius:50%;background:var(--bg-secondary);
+  border:none;display:flex;align-items:center;justify-content:center;
+  color:var(--text-secondary);transition:all 0.15s;
+}
+.sheet-close:active{transform:scale(0.88);background:var(--card-border)}
+.sheet-close svg{width:18px;height:18px}
+
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 0;border-bottom:1px solid var(--card-border);
+}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-size:15px;font-weight:500}
+.setting-hint{font-size:12px;color:var(--text-muted);margin-top:2px}
+.toggle-switch{
+  width:50px;height:30px;border-radius:15px;background:var(--input-border);
+  border:none;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;
+}
+.toggle-switch.active{background:var(--primary)}
+.toggle-switch::after{
+  content:'';position:absolute;width:24px;height:24px;border-radius:50%;
+  background:#fff;top:3px;left:3px;
+  transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-switch.active::after{transform:translateX(20px)}
+[dir="rtl"] .toggle-switch::after{left:auto;right:3px}
+[dir="rtl"] .toggle-switch.active::after{transform:translateX(-20px)}
+
+.lang-dropdown {
+  /* FIX: 0 padding on top and bottom. Only left/right padding. */
+  padding: 0 36px 0 14px; 
+  
+  /* FIX: Use exact heights to center the text and fill the clickable area */
+  height: 48px;
+  
+  border: 2px solid var(--input-border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  min-width: 120px;
+  transition: all 0.15s;
+  
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--input-bg);
+  
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+[dir="rtl"] .lang-dropdown {
+  /* FIX: 0 padding on top and bottom for the Arabic layout too */
+  padding: 0 14px 0 36px;
+  background-position: left 12px center;
+}
+
+.lang-dropdown:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--input-focus-ring);
+}
+
+.image-grid{display:flex;gap:10px;margin-bottom:18px}
+.image-box{
+  flex:1;aspect-ratio:1;border:2px dashed var(--input-border);
+  border-radius:var(--radius-lg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;cursor:pointer;
+  transition:all 0.15s;overflow:hidden;position:relative;background:var(--input-bg);
+}
+.image-box:active{transform:scale(0.97);border-color:var(--primary)}
+.image-box img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.image-box svg{width:32px;height:32px;color:var(--text-muted);flex-shrink:0}
+.image-box span{font-size:11px;color:var(--text-muted);font-weight:500;z-index:1;pointer-events:none}
+
+.image-source-picker{
+  display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  align-items:flex-end;justify-content:center;
+}
+.image-source-picker.open{display:flex}
+.image-source-menu{
+  background:var(--card);width:100%;max-width:400px;
+  border-radius:var(--radius-2xl) var(--radius-2xl) 0 0;
+  padding:24px 20px;padding-bottom:max(24px,env(safe-area-inset-bottom,20px));
+  animation:slideUp 0.25s;
+}
+
+.image-source-label{
+  width:100%;padding:16px;display:flex;align-items:center;gap:14px;
+  border:none;background:var(--bg-secondary);border-radius:var(--radius);
+  margin-bottom:10px;font-size:16px;font-weight:600;color:var(--text);
+  transition:all 0.15s;cursor:pointer;text-align:start;
+}
+.image-source-label:active{transform:scale(0.97);background:var(--input-bg)}
+.image-source-label svg{width:22px;height:22px;color:var(--primary);flex-shrink:0}
+.btn-cancel{
+  width:100%;padding:14px;border:none;background:transparent;
+  color:var(--text-secondary);font-size:15px;font-weight:500;border-radius:var(--radius);
+  cursor:pointer;transition:all 0.15s;
+}
+.btn-cancel:active{background:var(--bg-secondary)}
+
+.flex-sheet{display:flex;flex-direction:column}
+.chat-container{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:12px}
+.chat-msg{display:flex;flex-direction:column;max-width:85%;animation:fadeUp 0.2s both;cursor:pointer}
+.chat-msg.sent{align-self:flex-start}
+.chat-msg.received{align-self:flex-end}
+.chat-sender{font-size:11px;color:var(--text-muted);margin-bottom:3px;margin-inline-start:4px}
+.chat-bubble{padding:12px 14px;border-radius:var(--radius-lg);font-size:14px;line-height:1.5;color:var(--text);box-shadow:var(--shadow-sm);word-break:break-word;position:relative}
+.chat-msg.sent .chat-bubble{background:var(--primary);color:#fff;border-top-right-radius:4px}
+.chat-msg.received .chat-bubble{background:var(--card);border:1px solid var(--card-border);border-top-left-radius:4px}
+.chat-time{font-size:10px;color:var(--text-muted);margin-top:3px;margin-inline-start:4px}
+.chat-msg.sent .chat-time{align-self:flex-start}
+.chat-msg.received .chat-time{align-self:flex-end}
+.chat-expand-hint{font-size:10px;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:3px}
+.chat-msg.sent .chat-expand-hint{color:rgba(255,255,255,0.7)}
+.chat-expand-hint svg{width:10px;height:10px}
+.chat-expanding-content{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--card-border)}
+.chat-msg.sent .chat-expanding-content{border-top-color:rgba(255,255,255,0.2)}
+.chat-msg.expanded .chat-expanding-content{display:block}
+.chat-expanding-content .detail-row{margin-bottom:8px;font-size:13px}
+.chat-expanding-content .detail-row:last-child{margin-bottom:0}
+.chat-expanding-content .detail-label{font-weight:600;color:var(--text-secondary);font-size:11px;margin-bottom:2px}
+.chat-msg.sent .chat-expanding-content .detail-label{color:rgba(255,255,255,0.8)}
+.chat-expanding-content .detail-value{color:var(--text)}
+.chat-msg.sent .chat-expanding-content .detail-value{color:#fff}
+.chat-images{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chat-images img{width:100%;max-width:200px;border-radius:var(--radius);cursor:pointer;border:1px solid rgba(0,0,0,0.1)}
+.chat-audio{margin-top:6px}
+.chat-audio audio{height:36px;width:100%;max-width:240px;border-radius:var(--radius)}
+
+.log-entry{padding:10px 0;border-bottom:1px solid var(--card-border);font-size:13px;animation:fadeUp 0.2s both}
+.log-entry:last-child{border-bottom:none}
+.log-entry-time{font-size:11px;color:var(--text-muted);margin-bottom:3px}
+.log-entry-action{font-weight:600;color:var(--text)}
+.log-entry-action.success{color:var(--secondary)}
+.log-entry-action.fail{color:var(--danger)}
+.log-entry-user{color:var(--text-secondary)}
+.log-entry-ip{font-size:11px;color:var(--text-muted)}
+
+.loading-overlay{
+  display:none;position:fixed;inset:0;z-index:400;
+  background:rgba(0,0,0,0.35);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+  align-items:center;justify-content:center;
+}
+.loading-overlay.active{display:flex}
+.spinner{
+  width:44px;height:44px;border:4px solid rgba(255,255,255,0.25);
+  border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;
+}
+
+.toast{
+  position:fixed;bottom:90px;left:20px;right:20px;z-index:500;
+  background:var(--text);color:var(--bg);padding:14px 18px;border-radius:var(--radius);
+  font-size:14px;font-weight:600;text-align:center;box-shadow:var(--shadow-lg);
+  transform:translateY(120%);opacity:0;transition:all 0.25s cubic-bezier(0.32,0.72,0,1);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:var(--danger);color:#fff}
+
+.image-viewer{
+  display:none;position:fixed;inset:0;z-index:450;
+  background:rgba(0,0,0,0.92);align-items:center;justify-content:center;
+  animation:fadeUp 0.2s;
+}
+.image-viewer.open{display:flex}
+.image-viewer img{max-width:95%;max-height:85vh;border-radius:var(--radius);object-fit:contain}
+.image-viewer-close{
+  position:absolute;top:20px;right:20px;width:40px;height:40px;
+  border-radius:50%;background:rgba(255,255,255,0.2);border:none;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  cursor:pointer;transition:all 0.15s;
+}
+.image-viewer-close:active{background:rgba(255,255,255,0.35);transform:scale(0.9)}
+
+.hidden{display:none!important}
+
+@media(min-width:500px){
+  .login-card{padding:44px 36px}
+  .entries-container{max-width:650px;margin:0 auto}
+  .sheet{max-width:500px;margin:0 auto;border-radius:var(--radius-2xl)}
+  .image-source-menu{max-width:500px}
+}
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+    </div>
+    <h1 class="login-title" id="loginTitle">مرحباً بك</h1>
+    <p class="login-subtitle" id="loginSubtitle">سجل دخولك للمتابعة</p>
+    <form id="loginForm">
+      <div class="field-group">
+        <label id="lblUsername">اسم المستخدم</label>
+        <input type="text" id="usernameInput" placeholder="أدخل اسم المستخدم" required autocomplete="username">
+      </div>
+      <div class="field-group">
+        <label id="lblPassword">كلمة المرور</label>
+        <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary" id="loginBtn">دخول</button>
+    </form>
+    <div class="login-error" id="loginError">اسم المستخدم أو كلمة المرور غير صحيحة</div>
+  </div>
+</div>
+
+<div class="app-shell" id="appShell">
+  <header class="app-header">
+    <div class="header-right">
+      <button class="icon-btn" id="cmdBtn" aria-label="Logs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+      </button>
+      <h1 class="header-title" id="appTitle">البيانات</h1>
+    </div>
+    <div class="header-left">
+      <button class="icon-btn" id="notifBtn" aria-label="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="notif-badge" id="notifBadge" style="display:none"></span>
+      </button>
+      <button class="icon-btn" id="searchBtn" aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>
+        </svg>
+      </button>
+      <button class="icon-btn" id="addBtn" aria-label="Add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14M5 12h14"></path>
+        </svg>
+      </button>
+      <button class="btn-logout" id="logoutBtn">خروج</button>
+    </div>
+  </header>
+
+  <div class="search-bar" id="searchBar">
+    <input type="search" id="searchInput" placeholder="ابحث...">
+  </div>
+
+  <div class="entries-container" id="entriesList">
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+      <h3 id="emptyTitle">لا توجد بيانات</h3>
+      <p id="emptyDesc">اضغط على + لإضافة بيانات جديدة</p>
+    </div>
+  </div>
+
+  <button class="fab-settings" id="fabSettings" aria-label="Settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+    </svg>
+  </button>
+</div>
+
+<div class="sheet-overlay" id="settingsOverlay"></div>
+<div class="sheet" id="settingsSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <h2 class="sheet-title" id="settingsTitle">الإعدادات</h2>
+    <button class="sheet-close" id="settingsClose">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+    </button>
+  </div>
+  <div class="setting-row">
+    <div><div class="setting-label" id="lblTheme">الوضع الداكن</div><div class="setting-hint" id="hintTheme">تفعيل الوضع الداكن للتطبيق</div></div>
+    <button class="toggle-switch" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+  <div class="setting-row">
+    <div><div class="setting-label" id="lblLang">اللغة</div><div class="setting-hint" id="hintLang">اختر لغة التطبيق</div></div>
+    <div class="lang-picker-wrapper">
+      <span id="langVisualText" style="font-size: 14px; font-weight: 600; color: var(--text);">العربية</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+      <select id="langDropdown" class="ghost-select">
+        <option value="ar">العربية</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="addOverlay"></div>
+<div class="sheet" id="addSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <h2 class="sheet-title" id="addTitle">إضافة بيانات</h2>
+    <button class="sheet-close" id="addClose">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+    </button>
+  </div>
+  <form id="addForm">
+    <input type="hidden" id="editId" value="">
+    <div class="field-group">
+      <label id="lblCustomerName">اسم الزبون</label>
+      <input type="text" id="customerNameInput" placeholder="" required>
+    </div>
+    <div class="field-group">
+      <label id="lblStoreName">اسم المحل</label>
+      <input type="text" id="storeNameInput" placeholder="" required>
+    </div>
+    <div class="field-group">
+      <label id="lblPromoter">المروج</label>
+      <input type="text" id="promoterInput" placeholder="" required>
+    </div>
+    <div class="field-group">
+      <label id="lblRepresentative">المندوب</label>
+      <input type="text" id="representativeInput" placeholder="" required>
+    </div>
+    <div class="field-group">
+      <label id="lblPhone">رقم الهاتف</label>
+      <input type="tel" id="phoneInput" placeholder="" required>
+    </div>
+    <div class="field-group">
+      <label id="lblAddress">العنوان</label>
+      <input type="text" id="addressInput" placeholder="">
+    </div>
+    <div class="field-group">
+      <label id="lblNotes">ملاحظات</label>
+      <textarea id="notesInput" placeholder="" rows="2"></textarea>
+    </div>
+
+    <label id="lblImages" style="display:block;margin-bottom:8px;font-weight:600;font-size:13px">الصور (اختياري)</label>
+    <div class="image-grid">
+      <div class="image-box" id="image1Box" data-index="0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+        <span id="img1Label">صورة 1</span>
+      </div>
+      <div class="image-box" id="image2Box" data-index="1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+        <span id="img2Label">صورة 2</span>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary" id="submitBtn">حفظ</button>
+  </form>
+</div>
+
+<div class="image-source-picker" id="imageSourcePicker">
+  <div class="image-source-menu">
+    <label class="image-source-label" id="cameraLabelBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle>
+      </svg>
+      <span id="cameraLabel">الكاميرا</span>
+    </label>
+    <label class="image-source-label" id="galleryLabelBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>
+      </svg>
+      <span id="galleryLabel">المعرض</span>
+    </label>
+    <button class="btn-cancel" id="cancelImagePick">إلغاء</button>
+  </div>
+</div>
+<input type="file" id="cameraInput" accept="image/*" style="opacity:0; position:absolute; z-index:-1;">
+<input type="file" id="galleryInput" accept="image/*" style="opacity:0; position:absolute; z-index:-1;">
+
+<div class="sheet-overlay" id="notifOverlay"></div>
+<div class="sheet flex-sheet" id="notifSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header" style="flex-shrink:0;margin-bottom:10px">
+    <h2 class="sheet-title" id="notifTitle">الإشعارات</h2>
+    <button class="sheet-close" id="notifClose">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+    </button>
+  </div>
+  <div id="notifContent" class="chat-container">
+    <p style="text-align:center;color:var(--text-muted);padding:20px" id="notifLoading">جاري التحميل...</p>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="logsOverlay"></div>
+<div class="sheet" id="logsSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <h2 class="sheet-title" id="logsTitle">سجل الدخول</h2>
+    <button class="sheet-close" id="logsClose">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+    </button>
+  </div>
+  <div id="logsContent" style="max-height:60vh;overflow-y:auto">
+    <p style="text-align:center;color:var(--text-muted);padding:20px" id="logsLoading">جاري التحميل...</p>
+  </div>
+</div>
+
+<div class="image-viewer" id="imageViewer">
+  <button class="image-viewer-close" id="imageViewerClose">x</button>
+  <img id="imageViewerImg" src="" alt="">
+</div>
+
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+var API_BASE = 'http://100.109.156.115:1274';
+
+var storage = {
+  get: function(key) { try { return localStorage.getItem(key); } catch(e) { return null; } },
+  set: function(key, val) { try { localStorage.setItem(key, val); } catch(e) {} },
+  remove: function(key) { try { localStorage.removeItem(key); } catch(e) {} }
+};
+
+var t = {
+  ar: {
+    appName:'مزامنة البيانات',appTitle:'البيانات',
+    loginTitle:'مرحباً بك',loginSubtitle:'سجل دخولك للمتابعة',
+    username:'اسم المستخدم',password:'كلمة المرور',loginBtn:'دخول',
+    unamePh:'أدخل اسم المستخدم',pwdPh:'أدخل كلمة المرور',
+    loginError:'اسم المستخدم أو كلمة المرور غير صحيحة',
+    accountDeleted:'تم حذف حسابك من قبل المسؤول',
+    logout:'خروج',searchPlaceholder:'ابحث...',
+    emptyTitle:'لا توجد بيانات',emptyDesc:'اضغط على + لإضافة بيانات جديدة',
+    addTitle:'إضافة بيانات',editTitle:'تعديل البيانات',save:'حفظ',update:'تحديث',
+    deleteConfirm:'هل أنت متأكد من حذف هذه البيانات؟',
+    deleteSuccess:'تم الحذف بنجاح',addSuccess:'تمت الإضافة بنجاح',updateSuccess:'تم التحديث بنجاح',
+    settingsTitle:'الإعدادات',themeLabel:'الوضع الداكن',themeHint:'تفعيل الوضع الداكن للتطبيق',
+    langLabel:'اللغة',langHint:'اختر لغة التطبيق',
+    customerName:'اسم الزبون',storeName:'اسم المحل',promoter:'المروج',
+    representative:'المندوب',phone:'رقم الهاتف',address:'العنوان',notes:'ملاحظات',
+    custPh:'أدخل اسم الزبون',storePh:'أدخل اسم المحل',promoPh:'أدخل المروج',
+    repPh:'أدخل المندوب',phonePh:'أدخل رقم الهاتف',addrPh:'أدخل العنوان',notesPh:'أدخل ملاحظات',
+    images:'الصور (اختياري)',image1:'صورة 1',image2:'صورة 2',
+    camera:'الكاميرا',gallery:'المعرض',cancel:'إلغاء',
+    fieldRequired:'الحقول المطلوبة غير مكتملة',
+    logsTitle:'سجل الدخول',logsEmpty:'لا توجد سجلات',
+    logLoginOK:'تسجيل دخول ناجح',logLoginFail:'تسجيل دخول فاشل',
+    logUserAdded:'إضافة مستخدم',logUserDeleted:'حذف مستخدم',
+    fromIP:'من IP',
+    notifications:'الإشعارات',notifEmpty:'لا توجد إشعارات',
+    notifLoading:'جاري التحميل...',
+    unauthorized:'انتهت الجلسة - يرجى تسجيل الدخول مجدداً',
+    connectionError:'خطأ في الاتصال',
+  },
+  en: {
+    appName:'Data Sync',appTitle:'Entries',
+    loginTitle:'Welcome',loginSubtitle:'Sign in to continue',
+    username:'Username',password:'Password',loginBtn:'Sign In',
+    unamePh:'Enter username',pwdPh:'Enter password',
+    loginError:'Invalid username or password',
+    accountDeleted:'Your account was deleted by an admin',
+    logout:'Logout',searchPlaceholder:'Search...',
+    emptyTitle:'No entries',emptyDesc:'Tap + to add a new entry',
+    addTitle:'Add Entry',editTitle:'Edit Entry',save:'Save',update:'Update',
+    deleteConfirm:'Delete this entry?',
+    deleteSuccess:'Deleted successfully',addSuccess:'Added successfully',updateSuccess:'Updated successfully',
+    settingsTitle:'Settings',themeLabel:'Dark Mode',themeHint:'Enable dark mode for the app',
+    langLabel:'Language',langHint:'Choose app language',
+    customerName:'Customer Name',storeName:'Store Name',promoter:'Promoter',
+    representative:'Representative',phone:'Phone Number',address:'Address',notes:'Notes',
+    custPh:'Enter customer name',storePh:'Enter store name',promoPh:'Enter promoter',
+    repPh:'Enter representative',phonePh:'Enter phone number',addrPh:'Enter address',notesPh:'Enter notes',
+    images:'Images (optional)',image1:'Image 1',image2:'Image 2',
+    camera:'Camera',gallery:'Gallery',cancel:'Cancel',
+    fieldRequired:'Required fields are incomplete',
+    logsTitle:'Login Logs',logsEmpty:'No logs yet',
+    logLoginOK:'Login success',logLoginFail:'Login failed',
+    logUserAdded:'User added',logUserDeleted:'User deleted',
+    fromIP:'from IP',
+    notifications:'Notifications',notifEmpty:'No notifications',
+    notifLoading:'Loading...',
+    unauthorized:'Session expired - please login again',
+    connectionError:'Connection error',
+  }
+};
+
+var lang = storage.get('app_lang') || 'ar';
+var theme = storage.get('app_theme') || 'light';
+var entries = [];
+var currentImageIndex = 0;
+var image1File = null;
+var image2File = null;
+var token = storage.get('app_token') || null;
+var username = storage.get('app_user') || null;
+var authCheckTimer = null;
+var notifPollTimer = null;
+var allNotifications = [];
+var isNotifSheetOpen = false;
+
+function _(key){ return (t[lang]&&t[lang][key])||key; }
+function el(id){ return document.getElementById(id); }
+function showLoading(){ el('loadingOverlay').classList.add('active'); }
+function hideLoading(){ el('loadingOverlay').classList.remove('active'); }
+
+function showToast(msg,isError){
+  var toast=el('toast');toast.textContent=msg;
+  toast.className='toast'+(isError?' error':'')+' show';
+  clearTimeout(toast._t);toast._t=setTimeout(function(){toast.classList.remove('show')},2500);
+}
+
+function openSheet(overlayId,sheetId){
+  el(overlayId).classList.add('open');
+  el(sheetId).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSheet(overlayId,sheetId){
+  el(overlayId).classList.remove('open');
+  el(sheetId).classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function escapeHtml(str){
+  var d=document.createElement('div');d.textContent=str;return d.innerHTML;
+}
+
+function apiCall(method, path, body, isFormData) {
+  var headers = {};
+  if (!isFormData) headers['Content-Type'] = 'application/json';
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+
+  var opts = { method: method, headers: headers };
+  if (body) opts.body = isFormData ? body : JSON.stringify(body);
+
+  return fetch(API_BASE + path, opts).then(function(res) {
+    return res.json().catch(function() { return null; }).then(function(data) {
+      if (res.status === 401) {
+        forceLogout(_('unauthorized'));
+        throw new Error('Unauthorized');
+      }
+      if (!res.ok) throw new Error((data && data.error) || 'Request failed');
+      return data;
+    });
+  }).catch(function(err) {
+    if (err.message === 'Unauthorized') throw err;
+    throw new Error(_('connectionError'));
+  });
+}
+
+function doLogin(u, p) { return apiCall('POST', '/api/login', { username: u, password: p }); }
+function checkAuth() { return apiCall('POST', '/api/check-auth', {}); }
+function fetchEntries() { return apiCall('GET', '/api/entries'); }
+function createEntry(fd) { return apiCall('POST', '/api/entries', fd, true); }
+function updateEntry(id, fd) { return apiCall('PUT', '/api/entries/' + id, fd, true); }
+function deleteEntryById(id) { return apiCall('DELETE', '/api/entries/' + id); }
+function fetchNotifications() { return apiCall('GET', '/api/notifications'); }
+function fetchUnreadCount() { return apiCall('GET', '/api/notifications/unread-count'); }
+function markNotifRead(id) { return apiCall('POST', '/api/notifications/' + id + '/read'); }
+function fetchLogs() { return apiCall('GET', '/api/logs').catch(function() { return { logs: [] }; }); }
+
+function applyLanguage(){
+  var isRTL = lang === 'ar';
+  document.documentElement.lang = lang;
+  document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+  document.title = _('appName');
+
+  el('loginTitle').textContent = _('loginTitle');
+  el('loginSubtitle').textContent = _('loginSubtitle');
+  el('lblUsername').textContent = _('username');
+  el('lblPassword').textContent = _('password');
+  el('loginBtn').textContent = _('loginBtn');
+  el('usernameInput').placeholder = _('unamePh');
+  el('passwordInput').placeholder = _('pwdPh');
+  el('loginError').textContent = _('loginError');
+
+  el('appTitle').textContent = _('appTitle');
+  el('logoutBtn').textContent = _('logout');
+  el('searchInput').placeholder = _('searchPlaceholder');
+
+  el('emptyTitle').textContent = _('emptyTitle');
+  el('emptyDesc').textContent = _('emptyDesc');
+
+  var ed = el('editId').value;
+  el('addTitle').textContent = ed ? _('editTitle') : _('addTitle');
+  el('submitBtn').textContent = ed ? _('update') : _('save');
+
+  el('lblCustomerName').textContent = _('customerName');
+  el('lblStoreName').textContent = _('storeName');
+  el('lblPromoter').textContent = _('promoter');
+  el('lblRepresentative').textContent = _('representative');
+  el('lblPhone').textContent = _('phone');
+  el('lblAddress').textContent = _('address');
+  el('lblNotes').textContent = _('notes');
+  el('lblImages').textContent = _('images');
+  el('img1Label').textContent = _('image1');
+  el('img2Label').textContent = _('image2');
+  el('customerNameInput').placeholder = _('custPh');
+  el('storeNameInput').placeholder = _('storePh');
+  el('promoterInput').placeholder = _('promoPh');
+  el('representativeInput').placeholder = _('repPh');
+  el('phoneInput').placeholder = _('phonePh');
+  el('addressInput').placeholder = _('addrPh');
+  el('notesInput').placeholder = _('notesPh');
+
+  el('settingsTitle').textContent = _('settingsTitle');
+  el('lblTheme').textContent = _('themeLabel');
+  el('hintTheme').textContent = _('themeHint');
+  el('lblLang').textContent = _('langLabel');
+  el('hintLang').textContent = _('langHint');
+
+  el('cameraLabel').textContent = _('camera');
+  el('galleryLabel').textContent = _('gallery');
+  el('cancelImagePick').textContent = _('cancel');
+
+  el('logsTitle').textContent = _('logsTitle');
+  el('notifTitle').textContent = _('notifications');
+  el('notifLoading').textContent = _('notifLoading');
+
+  el('langDropdown').value = lang;
+
+  if (el('appShell').style.display === 'block' || el('appShell').style.display === '') {
+    renderEntries(entries);
+  }
+}
+
+function setLanguage(newLang) {
+  lang = newLang;
+  storage.set('app_lang', lang);
+  applyLanguage();
+}
+
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', theme);
+  el('themeToggle').classList.toggle('active', theme === 'dark');
+}
+function toggleTheme() {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  storage.set('app_theme', theme);
+  applyTheme();
+}
+
+function renderEntries(data) {
+  var list = el('entriesList');
+  if (!data || data.length === 0) {
+    list.innerHTML = '<div class="empty-state">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline>' +
+      '<line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>' +
+      '</svg><h3>' + _('emptyTitle') + '</h3><p>' + _('emptyDesc') + '</p></div>';
+    return;
+  }
+
+  list.innerHTML = data.map(function(entry, i) {
+    var delay = (i * 0.03).toFixed(2);
+    var name = entry.customer_name || '—';
+    var store = entry.store_name || '';
+    var promo = entry.promoter || '';
+    var rep = entry.representative || '';
+    var phone = entry.phone || '';
+    var addr = entry.address || '';
+    var notes = entry.notes || '';
+    var createdAt = entry.created_at || '';
+
+    var detailsParts = [];
+    if (promo || rep) detailsParts.push('<span class="entry-row-detail">' +
+      (promo ? '<strong>' + _('promoter') + ':</strong> ' + escapeHtml(promo) : '') +
+      (promo && rep ? ' · ' : '') +
+      (rep ? '<strong>' + _('representative') + ':</strong> ' + escapeHtml(rep) : '') +
+      '</span>');
+    if (phone) detailsParts.push('<span class="entry-row-detail"><strong>TEL</strong> ' + escapeHtml(phone) + '</span>');
+    if (addr) detailsParts.push('<span class="entry-row-detail"><strong>LOC</strong> ' + escapeHtml(addr) + '</span>');
+    if (createdAt) {
+      var dateStr = createdAt.replace('T', ' ').substring(0, 16);
+      detailsParts.push('<span class="entry-row-detail"><strong>TIM</strong> ' + escapeHtml(dateStr) + '</span>');
+    }
+
+    var imagesHtml = '';
+    if (entry.image1_url || entry.image2_url) {
+      imagesHtml = '<div class="entry-row-images">' +
+        (entry.image1_url ? '<img src="' + API_BASE + entry.image1_url + '" alt="" onclick="event.stopPropagation();viewImage(\'' + API_BASE + entry.image1_url + '\')" loading="lazy">' : '') +
+        (entry.image2_url ? '<img src="' + API_BASE + entry.image2_url + '" alt="" onclick="event.stopPropagation();viewImage(\'' + API_BASE + entry.image2_url + '\')" loading="lazy">' : '') +
+        '</div>';
+    }
+
+    return '<div class="entry-row" style="animation-delay:' + delay + 's">' +
+      '<div class="entry-row-top">' +
+        '<div class="entry-row-names">' +
+          '<div class="entry-row-name">' + escapeHtml(name) + (store ? ' <span style="color:var(--text-muted);font-weight:400;font-size:13px">- ' + escapeHtml(store) + '</span>' : '') + '</div>' +
+        '</div>' +
+        '<div class="entry-row-actions">' +
+          '<button class="row-action-btn edit-btn" onclick="event.stopPropagation();openEdit(\'' + entry.id + '\')" aria-label="' + _('editTitle') + '">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>' +
+              '<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>' +
+            '</svg>' +
+          '</button>' +
+          '<button class="row-action-btn del-btn" onclick="event.stopPropagation();handleDelete(\'' + entry.id + '\')" aria-label="' + _('deleteConfirm') + '">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+              '<polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>' +
+            '</svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+      (detailsParts.length ? '<div class="entry-row-details">' + detailsParts.join('') + '</div>' : '') +
+      (notes ? '<div class="entry-row-notes">' + escapeHtml(notes) + '</div>' : '') +
+      imagesHtml +
+      '</div>';
+  }).join('');
+}
+
+function viewImage(url) {
+  el('imageViewerImg').src = url;
+  el('imageViewer').classList.add('open');
+}
+
+function loadEntries() {
+  fetchEntries().then(function(data) {
+    entries = (data && data.entries) || [];
+    renderEntries(entries);
+  }).catch(function(err) {
+    console.error('Failed to load entries:', err);
+    entries = [];
+    renderEntries([]);
+  });
+}
+
+function handleDelete(id) {
+  if (!confirm(_('deleteConfirm'))) return;
+  showLoading();
+  deleteEntryById(id).then(function() {
+    showToast(_('deleteSuccess'));
+    loadEntries();
+  }).catch(function(err) {
+    showToast(err.message || 'Delete failed', true);
+  }).finally(hideLoading);
+}
+
+function openEdit(id) {
+  var entry = null;
+  for (var i = 0; i < entries.length; i++) {
+    if (entries[i].id === id) { entry = entries[i]; break; }
+  }
+  if (!entry) return;
+
+  el('editId').value = id;
+  el('customerNameInput').value = entry.customer_name || '';
+  el('storeNameInput').value = entry.store_name || '';
+  el('promoterInput').value = entry.promoter || '';
+  el('representativeInput').value = entry.representative || '';
+  el('phoneInput').value = entry.phone || '';
+  el('addressInput').value = entry.address || '';
+  el('notesInput').value = entry.notes || '';
+
+  el('addTitle').textContent = _('editTitle');
+  el('submitBtn').textContent = _('update');
+
+  image1File = null;
+  image2File = null;
+
+  var box1 = el('image1Box');
+  if (entry.image1_url) {
+    box1.innerHTML = '<img src="' + API_BASE + entry.image1_url + '" alt="">';
+    box1.setAttribute('data-existing-url', entry.image1_url);
+  } else {
+    resetImageBox(1);
+    box1.removeAttribute('data-existing-url');
+  }
+
+  var box2 = el('image2Box');
+  if (entry.image2_url) {
+    box2.innerHTML = '<img src="' + API_BASE + entry.image2_url + '" alt="">';
+    box2.setAttribute('data-existing-url', entry.image2_url);
+  } else {
+    resetImageBox(2);
+    box2.removeAttribute('data-existing-url');
+  }
+
+  openSheet('addOverlay', 'addSheet');
+}
+
+el('loginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var u = el('usernameInput').value.trim();
+  var p = el('passwordInput').value.trim();
+  if (!u || !p) return;
+
+  showLoading();
+  doLogin(u, p).then(function(data) {
+    token = data.token;
+    username = u;
+    storage.set('app_token', token);
+    storage.set('app_user', username);
+    el('loginScreen').style.display = 'none';
+    el('appShell').style.display = 'block';
+    el('loginError').style.display = 'none';
+    loadEntries();
+    startAuthCheck();
+    startNotifPolling();
+    updateUnreadBadge();
+  }).catch(function(err) {
+    el('loginError').style.display = 'block';
+    el('loginError').textContent = err.message || _('loginError');
+  }).finally(hideLoading);
+});
+
+if (token) {
+  checkAuth().then(function(data) {
+    if (data && data.valid) {
+      username = data.username || storage.get('app_user');
+      el('loginScreen').style.display = 'none';
+      el('appShell').style.display = 'block';
+      loadEntries();
+      startAuthCheck();
+      startNotifPolling();
+      updateUnreadBadge();
+    } else {
+      forceLogout();
+    }
+  }).catch(function() {
+    el('loginScreen').style.display = 'none';
+    el('appShell').style.display = 'block';
+    loadEntries();
+    startAuthCheck();
+    startNotifPolling();
+    updateUnreadBadge();
+  });
+}
+
+function startAuthCheck() {
+  if (authCheckTimer) clearInterval(authCheckTimer);
+  authCheckTimer = setInterval(function() {
+    if (!token) return;
+    checkAuth().then(function(data) {
+      if (!data || !data.valid) {
+        forceLogout(_('accountDeleted'));
+      } else {
+        username = data.username || username;
+      }
+    }).catch(function() {});
+  }, 15000);
+}
+
+function startNotifPolling() {
+  if (notifPollTimer) clearInterval(notifPollTimer);
+  notifPollTimer = setInterval(function() {
+    if (!token) return;
+    updateUnreadBadge();
+    if (isNotifSheetOpen) {
+      refreshNotificationsList();
+    }
+  }, 5000);
+}
+
+function updateUnreadBadge() {
+  if (!token) return;
+  fetchUnreadCount().then(function(data) {
+    var count = (data && data.count) || 0;
+    var badge = el('notifBadge');
+    if (count > 0) {
+      badge.textContent = count;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }).catch(function() {});
+}
+
+function forceLogout(msg) {
+  clearInterval(authCheckTimer);
+  authCheckTimer = null;
+  clearInterval(notifPollTimer);
+  notifPollTimer = null;
+  storage.remove('app_token');
+  storage.remove('app_user');
+  token = null;
+  username = null;
+  el('appShell').style.display = 'none';
+  el('loginScreen').style.display = 'flex';
+  el('usernameInput').value = '';
+  el('passwordInput').value = '';
+  el('loginError').style.display = 'none';
+  if (msg) showToast(msg, true);
+}
+
+el('logoutBtn').addEventListener('click', function() {
+  forceLogout();
+});
+
+el('searchBtn').addEventListener('click', function() {
+  var bar = el('searchBar');
+  var vis = bar.style.display === 'block';
+  bar.style.display = vis ? 'none' : 'block';
+  if (!vis) { el('searchInput').focus(); }
+  else { el('searchInput').value = ''; renderEntries(entries); }
+});
+
+el('searchInput').addEventListener('input', function(e) {
+  var q = e.target.value.toLowerCase();
+  var filtered = entries.filter(function(entry) {
+    return (entry.customer_name || '').toLowerCase().indexOf(q) > -1 ||
+           (entry.store_name || '').toLowerCase().indexOf(q) > -1 ||
+           (entry.promoter || '').toLowerCase().indexOf(q) > -1 ||
+           (entry.representative || '').toLowerCase().indexOf(q) > -1 ||
+           (entry.phone || '').toLowerCase().indexOf(q) > -1 ||
+           (entry.address || '').toLowerCase().indexOf(q) > -1 ||
+           (entry.notes || '').toLowerCase().indexOf(q) > -1;
+  });
+  renderEntries(filtered);
+});
+
+el('addBtn').addEventListener('click', function() {
+  resetAddForm();
+  el('editId').value = '';
+  el('addTitle').textContent = _('addTitle');
+  el('submitBtn').textContent = _('save');
+  openSheet('addOverlay', 'addSheet');
+});
+
+el('addClose').addEventListener('click', function() {
+  closeSheet('addOverlay', 'addSheet');
+  resetAddForm();
+});
+el('addOverlay').addEventListener('click', function() {
+  closeSheet('addOverlay', 'addSheet');
+  resetAddForm();
+});
+
+function resetAddForm() {
+  el('editId').value = '';
+  el('customerNameInput').value = '';
+  el('storeNameInput').value = '';
+  el('promoterInput').value = '';
+  el('representativeInput').value = '';
+  el('phoneInput').value = '';
+  el('addressInput').value = '';
+  el('notesInput').value = '';
+  el('addTitle').textContent = _('addTitle');
+  el('submitBtn').textContent = _('save');
+  image1File = null;
+  image2File = null;
+  resetImageBox(1);
+  resetImageBox(2);
+}
+
+function resetImageBox(num) {
+  var box = el('image' + num + 'Box');
+  box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+    '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>' +
+    '</svg><span>' + _('image' + num) + '</span>';
+  box.removeAttribute('data-existing-url');
+}
+
+el('image1Box').addEventListener('click', function() {
+  currentImageIndex = 0;
+  el('imageSourcePicker').classList.add('open');
+});
+el('image2Box').addEventListener('click', function() {
+  currentImageIndex = 1;
+  el('imageSourcePicker').classList.add('open');
+});
+
+el('cancelImagePick').addEventListener('click', function() {
+  el('imageSourcePicker').classList.remove('open');
+});
+el('imageSourcePicker').addEventListener('click', function(e) {
+  if (e.target === el('imageSourcePicker')) el('imageSourcePicker').classList.remove('open');
+});
+
+function handleImageFile(file) {
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var box = el('image' + (currentImageIndex + 1) + 'Box');
+    box.innerHTML = '<img src="' + e.target.result + '" alt="">';
+    box.removeAttribute('data-existing-url');
+  };
+  reader.readAsDataURL(file);
+  if (currentImageIndex === 0) image1File = file;
+  else image2File = file;
+}
+
+// 1. Grab the camera input element
+var camInput = document.getElementById('cameraInput');
+
+// 2. Read the device data (User Agent)
+var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+// 3. Build the if/else fallback logic
+if (/android/i.test(userAgent)) {
+  // Check if it's an older Android version (Android 9 or below)
+  var isOldAndroid = /Android [1-9](\.[0-9]+)?;/i.test(userAgent);
+  
+  if (isOldAndroid) {
+    // Apply legacy capture for older phones
+    camInput.setAttribute('capture', 'camera');
+  } else {
+    // Apply modern capture for newer phones
+    camInput.setAttribute('capture', 'environment');
+  }
+} else {
+  // Default to modern standard for iOS or anything else
+  camInput.setAttribute('capture', 'environment');
+}
+
+// Force the clicks via JavaScript to bypass mobile intent blocks
+el('cameraLabelBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  el('cameraInput').click();
+});
+// Force the clicks via JavaScript to bypass mobile intent blocks
+el('cameraLabelBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  el('cameraInput').click();
+});
+
+el('galleryLabelBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  el('galleryInput').click();
+});
+
+// Handle the files when they are selected
+el('cameraInput').addEventListener('change', function(e) {
+  if (e.target.files && e.target.files[0]) handleImageFile(e.target.files[0]);
+  el('imageSourcePicker').classList.remove('open');
+  e.target.value = '';
+});
+
+el('galleryInput').addEventListener('change', function(e) {
+  if (e.target.files && e.target.files[0]) handleImageFile(e.target.files[0]);
+  el('imageSourcePicker').classList.remove('open');
+  e.target.value = '';
+});
+
+el('addForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var editId = el('editId').value.trim();
+
+  var customer_name = el('customerNameInput').value.trim();
+  var store_name = el('storeNameInput').value.trim();
+  var promoter = el('promoterInput').value.trim();
+  var representative = el('representativeInput').value.trim();
+  var phone = el('phoneInput').value.trim();
+  var address = el('addressInput').value.trim();
+  var notes = el('notesInput').value.trim();
+
+  if (!customer_name || !store_name || !promoter || !representative || !phone) {
+    showToast(_('fieldRequired'), true);
+    return;
+  }
+
+  showLoading();
+
+  var fd = new FormData();
+  fd.append('customer_name', customer_name);
+  fd.append('store_name', store_name);
+  fd.append('promoter', promoter);
+  fd.append('representative', representative);
+  fd.append('phone', phone);
+  fd.append('address', address);
+  fd.append('notes', notes);
+  if (image1File) fd.append('image1', image1File);
+  if (image2File) fd.append('image2', image2File);
+
+  var promise = editId ? updateEntry(editId, fd) : createEntry(fd);
+
+  promise.then(function() {
+    showToast(editId ? _('updateSuccess') : _('addSuccess'));
+    closeSheet('addOverlay', 'addSheet');
+    resetAddForm();
+    loadEntries();
+  }).catch(function(err) {
+    showToast(err.message || 'Failed to save', true);
+  }).finally(hideLoading);
+});
+
+// 1. Open the Settings Menu smoothly
+el('fabSettings').addEventListener('click', function() {
+  // Sync the dropdown and toggle visuals before opening
+  el('langDropdown').value = lang;
+  el('themeToggle').classList.toggle('active', theme === 'dark');
+  
+  openSheet('settingsOverlay', 'settingsSheet');
+});
+
+// 2. Close the Settings Menu
+el('settingsClose').addEventListener('click', function() {
+  closeSheet('settingsOverlay', 'settingsSheet');
+});
+el('settingsOverlay').addEventListener('click', function() {
+  closeSheet('settingsOverlay', 'settingsSheet');
+});
+
+// 3. Handle Theme Toggle (Saves automatically to LocalStorage)
+el('themeToggle').addEventListener('click', function() {
+  toggleTheme(); // This function already updates the UI and saves the choice
+});
+
+// 4. Handle Language Dropdown (Saves and forces a full app refresh)
+el('langDropdown').addEventListener('change', function(e) {
+  // Save the new language to the phone's storage
+  storage.set('app_lang', e.target.value); 
+  
+  // Force the browser to instantly reload the page to apply the language cleanly
+  window.location.reload(); 
+});
+
+el('cmdBtn').addEventListener('click', function() {
+  openSheet('logsOverlay', 'logsSheet');
+  loadLogs();
+});
+el('logsClose').addEventListener('click', function() {
+  closeSheet('logsOverlay', 'logsSheet');
+});
+el('logsOverlay').addEventListener('click', function() {
+  closeSheet('logsOverlay', 'logsSheet');
+});
+
+function loadLogs() {
+  el('logsLoading').style.display = 'block';
+  el('logsLoading').textContent = _('notifLoading');
+  fetchLogs().then(function(data) {
+    var logs = (data && data.logs) || [];
+    var content = el('logsContent');
+    if (logs.length === 0) {
+      content.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px">' + _('logsEmpty') + '</p>';
+      return;
+    }
+    var actionLabels = {
+      LOGIN_SUCCESS: _('logLoginOK'),
+      LOGIN_FAILED: _('logLoginFail'),
+      USER_ADDED: _('logUserAdded'),
+      USER_DELETED: _('logUserDeleted')
+    };
+    content.innerHTML = logs.map(function(log) {
+      var ts = (log.timestamp || '').replace('T', ' ').substring(0, 19);
+      var action = actionLabels[log.action] || log.action || '?';
+      var isGood = log.action === 'LOGIN_SUCCESS' || log.action === 'USER_ADDED';
+      var isBad = log.action === 'LOGIN_FAILED' || log.action === 'USER_DELETED';
+      var cls = isGood ? ' success' : isBad ? ' fail' : '';
+      return '<div class="log-entry">' +
+        '<div class="log-entry-time">' + escapeHtml(ts) + '</div>' +
+        '<div class="log-entry-action' + cls + '">' + escapeHtml(action) + '</div>' +
+        '<div class="log-entry-user">' + escapeHtml(log.username || '?') + '</div>' +
+        '<div class="log-entry-ip">' + _('fromIP') + ': ' + escapeHtml(log.ip || '?') + '</div>' +
+        '</div>';
+    }).join('');
+  }).catch(function(err) {
+    el('logsContent').innerHTML = '<p style="text-align:center;color:var(--danger);padding:20px">' + escapeHtml(err.message) + '</p>';
+  }).finally(function() {
+    el('logsLoading').style.display = 'none';
+  });
+}
+
+el('notifBtn').addEventListener('click', function() {
+  isNotifSheetOpen = true;
+  openSheet('notifOverlay', 'notifSheet');
+  loadNotifications();
+});
+el('notifClose').addEventListener('click', function() {
+  isNotifSheetOpen = false;
+  closeSheet('notifOverlay', 'notifSheet');
+});
+el('notifOverlay').addEventListener('click', function() {
+  isNotifSheetOpen = false;
+  closeSheet('notifOverlay', 'notifSheet');
+});
+
+function loadNotifications() {
+  el('notifLoading').style.display = 'block';
+  el('notifLoading').textContent = _('notifLoading');
+
+  fetchNotifications().then(function(data) {
+    allNotifications = (data && data.notifications) || [];
+    allNotifications.reverse();
+    renderNotificationsList();
+  }).catch(function(err) {
+    el('notifContent').innerHTML = '<p style="text-align:center;color:var(--danger);padding:20px">' + escapeHtml(err.message) + '</p>';
+  }).finally(function() {
+    el('notifLoading').style.display = 'none';
+  });
+}
+
+function refreshNotificationsList() {
+  fetchNotifications().then(function(data) {
+    allNotifications = (data && data.notifications) || [];
+    allNotifications.reverse();
+    renderNotificationsList();
+  }).catch(function() {});
+}
+
+function renderNotificationsList() {
+  var content = el('notifContent');
+  
+  if (allNotifications.length === 0) {
+    content.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px">' + _('notifEmpty') + '</p>';
+    return;
+  }
+
+  var placeholder = content.querySelector('p');
+  if (placeholder) {
+    placeholder.remove();
+  }
+
+  var currUser = storage.get('app_user');
+  var addedNewMessage = false;
+
+  allNotifications.forEach(function(n) {
+    if (content.querySelector('[data-id="' + n.id + '"]')) {
+      return; 
+    }
+
+    addedNewMessage = true; 
+
+    var isSent = n.sender === currUser;
+    var msgClass = isSent ? 'sent' : 'received';
+    var ts = (n.timestamp || '').replace('T', ' ').substring(0, 16);
+    var hasDetails = n.email || n.location || (n.image_urls && n.image_urls.length > 0) || n.audio_url;
+
+    var div = document.createElement('div');
+    div.className = 'chat-msg ' + msgClass;
+    div.setAttribute('data-id', n.id);
+    div.onclick = function() { toggleNotifExpand(this, n.id); };
+
+var html = '';
+    if (!isSent) {
+      html += '<div class="chat-sender">' + escapeHtml(n.sender || 'Admin') + '</div>';
+    }
+    html += '<div class="chat-bubble">';
+    
+    // FIX 1: Force the placeholder to push the bubble open to at least 260px
+    if (n.text) {
+      html += '<div>' + escapeHtml(n.text).replace(/\n/g, '<br>') + '</div>';
+    } else {
+      html += '<div style="min-width: 260px; font-style: italic; color: var(--text-muted); font-size: 13px;">' + 
+              (n.audio_url ? '🎵 رسالة صوتية' : '📎 مرفق') + 
+              '</div>';
+    }
+
+    html += '<div class="chat-expanding-content">';
+    if (n.email) {
+      html += '<div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">' + escapeHtml(n.email) + '</div></div>';
+    }
+    if (n.location) {
+      html += '<div class="detail-row"><div class="detail-label">Location</div><div class="detail-value">' + escapeHtml(n.location) + '</div></div>';
+    }
+    if (n.image_urls && n.image_urls.length > 0) {
+      html += '<div class="detail-row"><div class="detail-label">Images</div><div class="chat-images">';
+      n.image_urls.forEach(function(img) {
+        html += '<img src="' + API_BASE + img + '" onclick="event.stopPropagation();viewImage(\'' + API_BASE + img + '\')" loading="lazy">';
+      });
+      html += '</div></div>';
+    }
+    if (n.audio_url) {
+      // FIX 2: Removed "width: 100%" and replaced it with strict pixel dimensions (260px)
+      html += '<div class="detail-row"><div class="detail-label">Audio</div><div class="chat-audio" onclick="event.stopPropagation();"><audio controls preload="auto" style="width: 260px; min-width: 260px; height: 50px;"><source src="' + API_BASE + n.audio_url + '" type="audio/mpeg"><source src="' + API_BASE + n.audio_url + '" type="audio/wav"><source src="' + API_BASE + n.audio_url + '" type="audio/ogg"></audio></div></div>';
+    }
+    html += '</div>';
+    if (hasDetails) {
+      html += '<div class="chat-expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg> Tap to expand</div>';
+    }
+    html += '</div>';
+    html += '<div class="chat-time">' + ts + '</div>';
+
+    div.innerHTML = html;
+    
+    content.appendChild(div);
+  });
+
+  if (addedNewMessage) {
+    setTimeout(function() {
+      content.scrollTop = content.scrollHeight;
+    }, 50);
+  }
+}
+
+function toggleNotifExpand(el, notifId) {
+  var wasExpanded = el.classList.contains('expanded');
+  document.querySelectorAll('.chat-msg').forEach(function(m) { m.classList.remove('expanded'); });
+  if (!wasExpanded) {
+    el.classList.add('expanded');
+    markSingleNotifRead(notifId);
+  }
+}
+
+function markSingleNotifRead(notifId) {
+  markNotifRead(notifId).then(function() {
+    allNotifications.forEach(function(n) {
+      if (n.id === notifId) n.is_read = true;
+    });
+    updateUnreadBadge();
+  }).catch(function(e) { console.error('Failed to mark read:', e); });
+}
+
+
+el('imageViewerClose').addEventListener('click', function() {
+  el('imageViewer').classList.remove('open');
+});
+el('imageViewer').addEventListener('click', function(e) {
+  if (e.target === el('imageViewer')) el('imageViewer').classList.remove('open');
+});
+
+applyTheme();
+applyLanguage();
+</script>
+</body>
+</html>
