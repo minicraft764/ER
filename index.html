@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<link rel="manifest" href="./manifest.json">
+<!DOCTYPE html><html data-theme="light" dir="rtl" lang="ar"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"><style>body {transition: opacity ease-in 0.2s; }
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; }
+</style>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
 <title>مزامنة البيانات</title>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -44,7 +42,7 @@ body{
   -webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;
   transition:background 0.3s,color 0.3s;
 }
-button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 input,textarea,select{font-family:inherit;color:var(--text)}
 img{display:block;max-width:100%}
 
@@ -144,24 +142,24 @@ img{display:block;max-width:100%}
   width:38px;height:38px;border-radius:var(--radius-sm);
   background:rgba(255,255,255,0.15);border:none;color:#fff;
   display:flex;align-items:center;justify-content:center;transition:all 0.15s;
-  position:relative;
+  position:relative;touch-action:manipulation;
 }
 .icon-btn:active{background:rgba(255,255,255,0.28);transform:scale(0.92)}
-.icon-btn svg{width:18px;height:18px}
+.icon-btn svg{width:18px;height:18px;pointer-events:none;}
 
 .notif-badge{
   position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;
   background:var(--danger);color:#fff;border-radius:9px;font-size:10px;
   font-weight:700;display:flex;align-items:center;justify-content:center;
   padding:0 5px;animation:badgePop 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  box-shadow:0 2px 6px rgba(239,68,68,0.4);
+  box-shadow:0 2px 6px rgba(239,68,68,0.4);pointer-events:none;
 }
 .notif-badge:empty{display:none}
 
 .btn-logout{
   background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
   color:#fff;padding:7px 14px;border-radius:var(--radius-sm);
-  font-size:13px;font-weight:600;margin-inline-start:4px;
+  font-size:13px;font-weight:600;margin-inline-start:4px;touch-action:manipulation;
 }
 .btn-logout:active{background:rgba(255,255,255,0.22);transform:scale(0.96)}
 
@@ -208,14 +206,14 @@ img{display:block;max-width:100%}
 .row-action-btn{
   width:30px;height:30px;border-radius:var(--radius-sm);border:none;
   display:flex;align-items:center;justify-content:center;transition:all 0.15s;
-  color:var(--text-muted);background:transparent;
+  color:var(--text-muted);background:transparent;touch-action:manipulation;
 }
 .row-action-btn:active{transform:scale(0.88)}
 .row-action-btn.edit-btn{color:#2563eb}
 .row-action-btn.edit-btn:active{background:rgba(37,99,235,0.12)}
 .row-action-btn.del-btn{color:#ef4444}
 .row-action-btn.del-btn:active{background:var(--danger-bg)}
-.row-action-btn svg{width:14px;height:14px}
+.row-action-btn svg{width:14px;height:14px;pointer-events:none;}
 
 .entry-row-details{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:11px;color:var(--text-secondary);margin-bottom:2px}
 .entry-row-detail{white-space:nowrap}
@@ -229,29 +227,31 @@ img{display:block;max-width:100%}
 }
 .entry-row-images img:active{transform:scale(1.2)}
 
+/* FAB Settings button — fixed clickability */
 .fab-settings {
   position: fixed;
   bottom: 22px;
-  width: 50px; height: 50px; border-radius: 50%;
-  background: var(--card); border: 1px solid var(--card-border);
-  box-shadow: var(--shadow-lg); display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary); z-index: 150;
-  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  z-index: 150;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  will-change: auto;
+  transition: box-shadow 0.2s, background 0.2s;
 }
-
-/* Force button to the Right in Arabic */
-[dir="rtl"] .fab-settings {
-  right: 20px;
-  left: auto;
-}
-
-/* Force button to the Left in English */
-[dir="ltr"] .fab-settings {
-  left: 20px;
-  right: auto;
-}
-.fab-settings:active{transform:scale(0.88)}
-.fab-settings svg{width:22px;height:22px;transition:transform 0.3s}
+[dir="rtl"] .fab-settings { right: 20px; left: auto; }
+[dir="ltr"] .fab-settings { left: 20px; right: auto; }
+.fab-settings:active { transform: scale(0.88); box-shadow: var(--shadow-sm); }
+.fab-settings svg { width: 22px; height: 22px; pointer-events: none; display: block; }
 
 .sheet-overlay{
   position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0);
@@ -276,10 +276,10 @@ img{display:block;max-width:100%}
 .sheet-close{
   width:34px;height:34px;border-radius:50%;background:var(--bg-secondary);
   border:none;display:flex;align-items:center;justify-content:center;
-  color:var(--text-secondary);transition:all 0.15s;
+  color:var(--text-secondary);transition:all 0.15s;touch-action:manipulation;
 }
 .sheet-close:active{transform:scale(0.88);background:var(--card-border)}
-.sheet-close svg{width:18px;height:18px}
+.sheet-close svg{width:18px;height:18px;pointer-events:none;}
 
 .setting-row{
   display:flex;align-items:center;justify-content:space-between;
@@ -288,28 +288,44 @@ img{display:block;max-width:100%}
 .setting-row:last-child{border-bottom:none}
 .setting-label{font-size:15px;font-weight:500}
 .setting-hint{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* Toggle switch — fixed to be fully tappable */
 .toggle-switch{
-  width:50px;height:30px;border-radius:15px;background:var(--input-border);
-  border:none;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;
+  width:50px;
+  height:30px;
+  border-radius:15px;
+  background:var(--input-border);
+  border:none;
+  position:relative;
+  cursor:pointer;
+  transition:background 0.2s;
+  flex-shrink:0;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  padding:0;
+  outline:none;
 }
 .toggle-switch.active{background:var(--primary)}
 .toggle-switch::after{
-  content:'';position:absolute;width:24px;height:24px;border-radius:50%;
-  background:#fff;top:3px;left:3px;
+  content:'';
+  position:absolute;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:#fff;
+  top:3px;
+  left:3px;
   transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
   box-shadow:0 1px 3px rgba(0,0,0,0.2);
+  pointer-events:none;
 }
 .toggle-switch.active::after{transform:translateX(20px)}
 [dir="rtl"] .toggle-switch::after{left:auto;right:3px}
 [dir="rtl"] .toggle-switch.active::after{transform:translateX(-20px)}
 
 .lang-dropdown {
-  /* FIX: 0 padding on top and bottom. Only left/right padding. */
-  padding: 0 36px 0 14px; 
-  
-  /* FIX: Use exact heights to center the text and fill the clickable area */
+  padding: 0 36px 0 14px;
   height: 48px;
-  
   border: 2px solid var(--input-border);
   border-radius: var(--radius);
   font-size: 14px;
@@ -318,22 +334,17 @@ img{display:block;max-width:100%}
   cursor: pointer;
   min-width: 120px;
   transition: all 0.15s;
-  
   -webkit-appearance: none;
   appearance: none;
   background-color: var(--input-bg);
-  
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>');
   background-repeat: no-repeat;
   background-position: right 12px center;
 }
-
 [dir="rtl"] .lang-dropdown {
-  /* FIX: 0 padding on top and bottom for the Arabic layout too */
   padding: 0 14px 0 36px;
   background-position: left 12px center;
 }
-
 .lang-dropdown:focus {
   outline: none;
   border-color: var(--primary);
@@ -346,10 +357,11 @@ img{display:block;max-width:100%}
   border-radius:var(--radius-lg);display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:4px;cursor:pointer;
   transition:all 0.15s;overflow:hidden;position:relative;background:var(--input-bg);
+  touch-action:manipulation;
 }
 .image-box:active{transform:scale(0.97);border-color:var(--primary)}
 .image-box img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.image-box svg{width:32px;height:32px;color:var(--text-muted);flex-shrink:0}
+.image-box svg{width:32px;height:32px;color:var(--text-muted);flex-shrink:0;pointer-events:none;}
 .image-box span{font-size:11px;color:var(--text-muted);font-weight:500;z-index:1;pointer-events:none}
 
 .image-source-picker{
@@ -369,16 +381,101 @@ img{display:block;max-width:100%}
   width:100%;padding:16px;display:flex;align-items:center;gap:14px;
   border:none;background:var(--bg-secondary);border-radius:var(--radius);
   margin-bottom:10px;font-size:16px;font-weight:600;color:var(--text);
-  transition:all 0.15s;cursor:pointer;text-align:start;
+  transition:all 0.15s;cursor:pointer;text-align:start;touch-action:manipulation;
 }
 .image-source-label:active{transform:scale(0.97);background:var(--input-bg)}
-.image-source-label svg{width:22px;height:22px;color:var(--primary);flex-shrink:0}
+.image-source-label svg{width:22px;height:22px;color:var(--primary);flex-shrink:0;pointer-events:none;}
 .btn-cancel{
   width:100%;padding:14px;border:none;background:transparent;
   color:var(--text-secondary);font-size:15px;font-weight:500;border-radius:var(--radius);
-  cursor:pointer;transition:all 0.15s;
+  cursor:pointer;transition:all 0.15s;touch-action:manipulation;
 }
 .btn-cancel:active{background:var(--bg-secondary)}
+
+/* Signature button in form */
+.sig-open-btn{
+  width:100%;padding:14px;background:var(--input-bg);
+  border:2px dashed var(--input-border);border-radius:var(--radius-lg);
+  font-size:15px;font-weight:600;color:var(--primary);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  cursor:pointer;transition:all 0.15s;touch-action:manipulation;
+}
+.sig-open-btn:active{transform:scale(0.97);border-color:var(--primary)}
+.sig-open-btn svg{width:20px;height:20px;pointer-events:none;}
+.sig-preview-wrap{
+  position:relative;border:2px solid var(--input-border);border-radius:var(--radius-lg);
+  overflow:hidden;background:#fff;height:100px;display:none;
+}
+.sig-preview-wrap img{width:100%;height:100%;object-fit:contain;}
+.sig-preview-clear{
+  position:absolute;top:6px;left:6px;width:28px;height:28px;border-radius:50%;
+  background:rgba(239,68,68,0.9);border:none;color:#fff;font-size:16px;line-height:1;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  touch-action:manipulation;
+}
+
+/* Signature canvas overlay */
+.sig-overlay{
+  display:none;position:fixed;inset:0;z-index:460;
+  flex-direction:column;background:#ffffff;
+}
+.sig-overlay.open{display:flex;}
+.sig-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;background:#f1f5f9;border-bottom:2px solid #e2e8f0;
+  flex-shrink:0;min-height:56px;
+}
+.sig-header-close{
+  width:36px;height:36px;border-radius:50%;background:#e2e8f0;
+  border:none;font-size:20px;color:#475569;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;touch-action:manipulation;flex-shrink:0;
+}
+.sig-header-close:active{background:#cbd5e1;transform:scale(0.9)}
+.sig-header-title{font-size:17px;font-weight:700;color:#0f172a;text-align:center;flex:1}
+.sig-header-save{
+  padding:9px 22px;background:linear-gradient(135deg,#2563eb,#1d4ed8);
+  color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;
+  cursor:pointer;touch-action:manipulation;flex-shrink:0;
+}
+.sig-header-save:active{opacity:0.85;transform:scale(0.95)}
+.sig-canvas-wrap{
+  flex:1;position:relative;overflow:hidden;background:#e8e8e8;
+  touch-action:none;
+}
+#sigPaperWrap{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform-origin:center center;
+  transform:translate(-50%,-50%);
+  box-shadow:0 4px 24px rgba(0,0,0,0.18);
+}
+#sigBgImg{
+  display:block;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+#sigCanvas{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  touch-action:none;cursor:crosshair;
+  background:transparent;
+}
+.sig-footer{
+  padding:12px 16px;background:#f8fafc;border-top:1.5px solid #e2e8f0;flex-shrink:0;
+  padding-bottom:max(12px,env(safe-area-inset-bottom,12px));
+}
+.sig-clear-btn{
+  width:100%;padding:13px;background:#f1f5f9;
+  border:1.5px solid #e2e8f0;border-radius:var(--radius);
+  font-size:15px;font-weight:600;color:#475569;cursor:pointer;
+  touch-action:manipulation;transition:all 0.15s;
+}
+.sig-clear-btn:active{background:#e2e8f0;transform:scale(0.98)}
 
 .flex-sheet{display:flex;flex-direction:column}
 .chat-container{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:12px}
@@ -394,7 +491,7 @@ img{display:block;max-width:100%}
 .chat-msg.received .chat-time{align-self:flex-end}
 .chat-expand-hint{font-size:10px;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:3px}
 .chat-msg.sent .chat-expand-hint{color:rgba(255,255,255,0.7)}
-.chat-expand-hint svg{width:10px;height:10px}
+.chat-expand-hint svg{width:10px;height:10px;pointer-events:none;}
 .chat-expanding-content{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--card-border)}
 .chat-msg.sent .chat-expanding-content{border-top-color:rgba(255,255,255,0.2)}
 .chat-msg.expanded .chat-expanding-content{display:block}
@@ -449,7 +546,7 @@ img{display:block;max-width:100%}
   position:absolute;top:20px;right:20px;width:40px;height:40px;
   border-radius:50%;background:rgba(255,255,255,0.2);border:none;color:#fff;
   display:flex;align-items:center;justify-content:center;font-size:22px;
-  cursor:pointer;transition:all 0.15s;
+  cursor:pointer;transition:all 0.15s;touch-action:manipulation;
 }
 .image-viewer-close:active{background:rgba(255,255,255,0.35);transform:scale(0.9)}
 
@@ -464,222 +561,208 @@ img{display:block;max-width:100%}
 </style>
 </head>
 <body>
-
 <div class="login-screen" id="loginScreen">
-  <div class="login-card">
-    <div class="login-icon">
-      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-    </div>
-    <h1 class="login-title" id="loginTitle">مرحباً بك</h1>
-    <p class="login-subtitle" id="loginSubtitle">سجل دخولك للمتابعة</p>
-    <form id="loginForm">
-      <div class="field-group">
-        <label id="lblUsername">اسم المستخدم</label>
-        <input type="text" id="usernameInput" placeholder="أدخل اسم المستخدم" required autocomplete="username">
-      </div>
-      <div class="field-group">
-        <label id="lblPassword">كلمة المرور</label>
-        <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور" required autocomplete="current-password">
-      </div>
-      <button type="submit" class="btn btn-primary" id="loginBtn">دخول</button>
-    </form>
-    <div class="login-error" id="loginError">اسم المستخدم أو كلمة المرور غير صحيحة</div>
-  </div>
+<div class="login-card">
+<div class="login-icon"><img alt="SyncFlow Logo" src="https://raw.githubusercontent.com/minicraft764/ER/refs/heads/main/ER1.jpg" style="width: 100%; height: 100%; object-fit: cover; border-radius: 18px;"></div>
+<h1 class="login-title" id="loginTitle">مرحباً بك</h1>
+<p class="login-subtitle" id="loginSubtitle">سجل دخولك للمتابعة</p>
+<form id="loginForm">
+<div class="field-group">
+<label id="lblUsername">اسم المستخدم</label>
+<input autocomplete="username" id="usernameInput" placeholder="أدخل اسم المستخدم" required type="text">
+</div>
+<div class="field-group">
+<label id="lblPassword">كلمة المرور</label>
+<input autocomplete="current-password" id="passwordInput" placeholder="أدخل كلمة المرور" required type="password">
+</div>
+<button class="btn btn-primary" id="loginBtn" type="submit">دخول</button>
+</form>
+<div class="login-error" id="loginError">اسم المستخدم أو كلمة المرور غير صحيحة</div>
+</div>
 </div>
 
 <div class="app-shell" id="appShell">
-  <header class="app-header">
-    <div class="header-right">
-      <button class="icon-btn" id="cmdBtn" aria-label="Logs">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line>
-        </svg>
-      </button>
-      <h1 class="header-title" id="appTitle">البيانات</h1>
-    </div>
-    <div class="header-left">
-      <button class="icon-btn" id="notifBtn" aria-label="Notifications">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-        </svg>
-        <span class="notif-badge" id="notifBadge" style="display:none"></span>
-      </button>
-      <button class="icon-btn" id="searchBtn" aria-label="Search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path>
-        </svg>
-      </button>
-      <button class="icon-btn" id="addBtn" aria-label="Add">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 5v14M5 12h14"></path>
-        </svg>
-      </button>
-      <button class="btn-logout" id="logoutBtn">خروج</button>
-    </div>
-  </header>
+<header class="app-header">
+<div class="header-right">
+<button aria-label="Logs" class="icon-btn" id="cmdBtn"><img alt="Logo" src="https://raw.githubusercontent.com/minicraft764/ER/refs/heads/main/ER1.jpg" style="width:24px;height:24px;object-fit:cover;border-radius:4px;pointer-events:none;"></button>
+<h1 class="header-title" id="appTitle">البيانات</h1>
+</div>
+<div class="header-left">
+<button aria-label="Notifications" class="icon-btn" id="notifBtn">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+<span class="notif-badge" id="notifBadge" style="display:none"></span>
+</button>
+<button aria-label="Search" class="icon-btn" id="searchBtn">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+</button>
+<button aria-label="Add" class="icon-btn" id="addBtn">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+</button>
+<button class="btn-logout" id="logoutBtn">خروج</button>
+</div>
+</header>
 
-  <div class="search-bar" id="searchBar">
-    <input type="search" id="searchInput" placeholder="ابحث...">
-  </div>
-
-  <div class="entries-container" id="entriesList">
-    <div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-        <polyline points="14 2 14 8 20 8"></polyline>
-        <line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line>
-        <polyline points="10 9 9 9 8 9"></polyline>
-      </svg>
-      <h3 id="emptyTitle">لا توجد بيانات</h3>
-      <p id="emptyDesc">اضغط على + لإضافة بيانات جديدة</p>
-    </div>
-  </div>
-
-  <button class="fab-settings" id="fabSettings" aria-label="Settings">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="3"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-    </svg>
-  </button>
+<div class="search-bar" id="searchBar">
+<input id="searchInput" placeholder="ابحث..." type="search">
 </div>
 
+<div class="entries-container" id="entriesList">
+<div class="empty-state">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" x2="8" y1="13" y2="13"></line><line x1="16" x2="8" y1="17" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+<h3 id="emptyTitle">لا توجد بيانات</h3>
+<p id="emptyDesc">اضغط على + لإضافة بيانات جديدة</p>
+</div>
+</div>
+
+<button aria-label="Settings" class="fab-settings" id="fabSettings" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="3"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+</svg>
+</button>
+</div>
+
+<!-- Settings Sheet -->
 <div class="sheet-overlay" id="settingsOverlay"></div>
 <div class="sheet" id="settingsSheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <h2 class="sheet-title" id="settingsTitle">الإعدادات</h2>
-    <button class="sheet-close" id="settingsClose">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-    </button>
-  </div>
-  <div class="setting-row">
-    <div><div class="setting-label" id="lblTheme">الوضع الداكن</div><div class="setting-hint" id="hintTheme">تفعيل الوضع الداكن للتطبيق</div></div>
-    <button class="toggle-switch" id="themeToggle" aria-label="Toggle theme"></button>
-  </div>
-  <div class="setting-row">
-    <div><div class="setting-label" id="lblLang">اللغة</div><div class="setting-hint" id="hintLang">اختر لغة التطبيق</div></div>
-    <div class="lang-picker-wrapper">
-      <span id="langVisualText" style="font-size: 14px; font-weight: 600; color: var(--text);">العربية</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
-        <path d="M6 9l6 6 6-6"/>
-      </svg>
-      <select id="langDropdown" class="ghost-select">
-        <option value="ar">العربية</option>
-        <option value="en">English</option>
-      </select>
-    </div>
-  </div>
+<div class="sheet-handle"></div>
+<div class="sheet-header">
+<h2 class="sheet-title" id="settingsTitle">الإعدادات</h2>
+<button class="sheet-close" id="settingsClose" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+</button>
+</div>
+<div class="setting-row">
+<div><div class="setting-label" id="lblTheme">الوضع الداكن</div><div class="setting-hint" id="hintTheme">تفعيل الوضع الداكن للتطبيق</div></div>
+<button aria-label="Toggle theme" class="toggle-switch" id="themeToggle" type="button"></button>
+</div>
 </div>
 
+<!-- Add / Edit Sheet -->
 <div class="sheet-overlay" id="addOverlay"></div>
 <div class="sheet" id="addSheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <h2 class="sheet-title" id="addTitle">إضافة بيانات</h2>
-    <button class="sheet-close" id="addClose">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-    </button>
-  </div>
-  <form id="addForm">
-    <input type="hidden" id="editId" value="">
-    <div class="field-group">
-      <label id="lblCustomerName">اسم الزبون</label>
-      <input type="text" id="customerNameInput" placeholder="" required>
-    </div>
-    <div class="field-group">
-      <label id="lblStoreName">اسم المحل</label>
-      <input type="text" id="storeNameInput" placeholder="" required>
-    </div>
-    <div class="field-group">
-      <label id="lblPromoter">المروج</label>
-      <input type="text" id="promoterInput" placeholder="" required>
-    </div>
-    <div class="field-group">
-      <label id="lblRepresentative">المندوب</label>
-      <input type="text" id="representativeInput" placeholder="" required>
-    </div>
-    <div class="field-group">
-      <label id="lblPhone">رقم الهاتف</label>
-      <input type="tel" id="phoneInput" placeholder="" required>
-    </div>
-    <div class="field-group">
-      <label id="lblAddress">العنوان</label>
-      <input type="text" id="addressInput" placeholder="">
-    </div>
-    <div class="field-group">
-      <label id="lblNotes">ملاحظات</label>
-      <textarea id="notesInput" placeholder="" rows="2"></textarea>
-    </div>
-
-    <label id="lblImages" style="display:block;margin-bottom:8px;font-weight:600;font-size:13px">الصور (اختياري)</label>
-    <div class="image-grid">
-      <div class="image-box" id="image1Box" data-index="0">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>
-        </svg>
-        <span id="img1Label">صورة 1</span>
-      </div>
-      <div class="image-box" id="image2Box" data-index="1">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>
-        </svg>
-        <span id="img2Label">صورة 2</span>
-      </div>
-    </div>
-    <button type="submit" class="btn btn-primary" id="submitBtn">حفظ</button>
-  </form>
+<div class="sheet-handle"></div>
+<div class="sheet-header">
+<h2 class="sheet-title" id="addTitle">إضافة بيانات</h2>
+<button class="sheet-close" id="addClose" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+</button>
+</div>
+<form id="addForm">
+<input id="editId" type="hidden" value="">
+<div class="field-group">
+<label id="lblStoreName">اسم المحل</label>
+<input id="storeNameInput" placeholder="أدخل اسم المحل" required type="text">
+</div>
+<div class="field-group">
+<label id="lblPromoter">المروج</label>
+<input id="promoterInput" placeholder="أدخل المروج" required type="text">
+</div>
+<div class="field-group">
+<label id="lblRepresentative">المندوب</label>
+<input id="representativeInput" placeholder="أدخل المندوب" required type="text">
+</div>
+<div class="field-group">
+<label id="lblAddress">العنوان</label>
+<input id="addressInput" placeholder="أدخل العنوان" type="text">
+</div>
+<div class="field-group">
+<label id="lblNotes">ملاحظات</label>
+<textarea id="notesInput" placeholder="أدخل ملاحظات" rows="2"></textarea>
 </div>
 
+<label id="lblImages" style="display:block;margin-bottom:8px;font-weight:600;font-size:13px;">الصور (اختياري)</label>
+<div class="image-grid">
+<div class="image-box" data-index="0" id="image1Box">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><rect height="18" rx="2" ry="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+<span id="img1Label">صورة 1</span>
+</div>
+<div class="image-box" data-index="1" id="image2Box">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><rect height="18" rx="2" ry="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+<span id="img2Label">صورة 2</span>
+</div>
+</div>
+
+<!-- Signature section -->
+<label style="display:block;margin-bottom:8px;font-weight:600;font-size:13px;">التوقيع (اختياري)</label>
+<div id="sigBtnWrap" style="margin-bottom:18px;">
+<button class="sig-open-btn" id="openSigBtn" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+توقيع
+</button>
+<div class="sig-preview-wrap" id="sigPreviewWrap">
+<img id="sigPreviewImg" alt="التوقيع" src="">
+<button class="sig-preview-clear" id="sigPreviewClear" type="button" title="حذف التوقيع">✕</button>
+</div>
+</div>
+
+<button class="btn btn-primary" id="submitBtn" type="submit">حفظ</button>
+</form>
+</div>
+
+<!-- Image source picker -->
 <div class="image-source-picker" id="imageSourcePicker">
-  <div class="image-source-menu">
-    <label class="image-source-label" id="cameraLabelBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle>
-      </svg>
-      <span id="cameraLabel">الكاميرا</span>
-    </label>
-    <label class="image-source-label" id="galleryLabelBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>
-      </svg>
-      <span id="galleryLabel">المعرض</span>
-    </label>
-    <button class="btn-cancel" id="cancelImagePick">إلغاء</button>
-  </div>
+<div class="image-source-menu">
+<label class="image-source-label" id="galleryLabelBtn">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><rect height="18" rx="2" ry="2" width="18" x="3" y="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+<span id="galleryLabel">المعرض</span>
+</label>
+<button class="btn-cancel" id="cancelImagePick" type="button">إلغاء</button>
 </div>
-<input type="file" id="cameraInput" accept="image/*" style="opacity:0; position:absolute; z-index:-1;">
-<input type="file" id="galleryInput" accept="image/*" style="opacity:0; position:absolute; z-index:-1;">
+</div>
+<input accept="image/*" id="galleryInput" style="opacity:0;position:absolute;z-index:-1;" type="file">
 
+<!-- Signature Canvas Overlay -->
+<div class="sig-overlay" id="sigOverlay">
+<div class="sig-header">
+<button class="sig-header-close" id="sigClose" type="button">✕</button>
+<span class="sig-header-title">التوقيع</span>
+<button class="sig-header-save" id="sigSave" type="button">حفظ</button>
+</div>
+<div class="sig-canvas-wrap" id="sigCanvasWrap">
+<div id="sigPaperWrap">
+<img id="sigBgImg" src="https://raw.githubusercontent.com/minicraft764/ER/refs/heads/main/sign.jpeg" alt="" draggable="false" crossorigin="anonymous">
+<canvas id="sigCanvas"></canvas>
+</div>
+</div>
+<div class="sig-footer">
+<button class="sig-clear-btn" id="sigClearBtn" type="button">مسح</button>
+</div>
+</div>
+
+<!-- Notifications Sheet -->
 <div class="sheet-overlay" id="notifOverlay"></div>
 <div class="sheet flex-sheet" id="notifSheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header" style="flex-shrink:0;margin-bottom:10px">
-    <h2 class="sheet-title" id="notifTitle">الإشعارات</h2>
-    <button class="sheet-close" id="notifClose">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-    </button>
-  </div>
-  <div id="notifContent" class="chat-container">
-    <p style="text-align:center;color:var(--text-muted);padding:20px" id="notifLoading">جاري التحميل...</p>
-  </div>
+<div class="sheet-handle"></div>
+<div class="sheet-header" style="flex-shrink:0;margin-bottom:10px">
+<h2 class="sheet-title" id="notifTitle">الإشعارات</h2>
+<button class="sheet-close" id="notifClose" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+</button>
+</div>
+<div class="chat-container" id="notifContent">
+<p id="notifLoading" style="text-align:center;color:var(--text-muted);padding:20px">جاري التحميل...</p>
+</div>
 </div>
 
+<!-- Logs Sheet -->
 <div class="sheet-overlay" id="logsOverlay"></div>
 <div class="sheet" id="logsSheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <h2 class="sheet-title" id="logsTitle">سجل الدخول</h2>
-    <button class="sheet-close" id="logsClose">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-    </button>
-  </div>
-  <div id="logsContent" style="max-height:60vh;overflow-y:auto">
-    <p style="text-align:center;color:var(--text-muted);padding:20px" id="logsLoading">جاري التحميل...</p>
-  </div>
+<div class="sheet-handle"></div>
+<div class="sheet-header">
+<h2 class="sheet-title" id="logsTitle">سجل الدخول</h2>
+<button class="sheet-close" id="logsClose" type="button">
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+</button>
+</div>
+<div id="logsContent" style="max-height:60vh;overflow-y:auto">
+<p id="logsLoading" style="text-align:center;color:var(--text-muted);padding:20px">جاري التحميل...</p>
+</div>
 </div>
 
+<!-- Image Viewer -->
 <div class="image-viewer" id="imageViewer">
-  <button class="image-viewer-close" id="imageViewerClose">x</button>
-  <img id="imageViewerImg" src="" alt="">
+<button class="image-viewer-close" id="imageViewerClose" type="button">✕</button>
+<img alt="" id="imageViewerImg" src="">
 </div>
 
 <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div></div>
@@ -709,12 +792,12 @@ var t = {
     deleteSuccess:'تم الحذف بنجاح',addSuccess:'تمت الإضافة بنجاح',updateSuccess:'تم التحديث بنجاح',
     settingsTitle:'الإعدادات',themeLabel:'الوضع الداكن',themeHint:'تفعيل الوضع الداكن للتطبيق',
     langLabel:'اللغة',langHint:'اختر لغة التطبيق',
-    customerName:'اسم الزبون',storeName:'اسم المحل',promoter:'المروج',
-    representative:'المندوب',phone:'رقم الهاتف',address:'العنوان',notes:'ملاحظات',
-    custPh:'أدخل اسم الزبون',storePh:'أدخل اسم المحل',promoPh:'أدخل المروج',
-    repPh:'أدخل المندوب',phonePh:'أدخل رقم الهاتف',addrPh:'أدخل العنوان',notesPh:'أدخل ملاحظات',
+    storeName:'اسم المحل',promoter:'المروج',
+    representative:'المندوب',address:'العنوان',notes:'ملاحظات',
+    storePh:'أدخل اسم المحل',promoPh:'أدخل المروج',
+    repPh:'أدخل المندوب',addrPh:'أدخل العنوان',notesPh:'أدخل ملاحظات',
     images:'الصور (اختياري)',image1:'صورة 1',image2:'صورة 2',
-    camera:'الكاميرا',gallery:'المعرض',cancel:'إلغاء',
+    gallery:'المعرض',cancel:'إلغاء',
     fieldRequired:'الحقول المطلوبة غير مكتملة',
     logsTitle:'سجل الدخول',logsEmpty:'لا توجد سجلات',
     logLoginOK:'تسجيل دخول ناجح',logLoginFail:'تسجيل دخول فاشل',
@@ -739,12 +822,12 @@ var t = {
     deleteSuccess:'Deleted successfully',addSuccess:'Added successfully',updateSuccess:'Updated successfully',
     settingsTitle:'Settings',themeLabel:'Dark Mode',themeHint:'Enable dark mode for the app',
     langLabel:'Language',langHint:'Choose app language',
-    customerName:'Customer Name',storeName:'Store Name',promoter:'Promoter',
-    representative:'Representative',phone:'Phone Number',address:'Address',notes:'Notes',
-    custPh:'Enter customer name',storePh:'Enter store name',promoPh:'Enter promoter',
-    repPh:'Enter representative',phonePh:'Enter phone number',addrPh:'Enter address',notesPh:'Enter notes',
+    storeName:'Store Name',promoter:'Promoter',
+    representative:'Representative',address:'Address',notes:'Notes',
+    storePh:'Enter store name',promoPh:'Enter promoter',
+    repPh:'Enter representative',addrPh:'Enter address',notesPh:'Enter notes',
     images:'Images (optional)',image1:'Image 1',image2:'Image 2',
-    camera:'Camera',gallery:'Gallery',cancel:'Cancel',
+    gallery:'Gallery',cancel:'Cancel',
     fieldRequired:'Required fields are incomplete',
     logsTitle:'Login Logs',logsEmpty:'No logs yet',
     logLoginOK:'Login success',logLoginFail:'Login failed',
@@ -757,18 +840,33 @@ var t = {
   }
 };
 
-var lang = storage.get('app_lang') || 'ar';
+var lang = 'ar';
 var theme = storage.get('app_theme') || 'light';
 var entries = [];
 var currentImageIndex = 0;
 var image1File = null;
 var image2File = null;
+var signatureFile = null;
 var token = storage.get('app_token') || null;
 var username = storage.get('app_user') || null;
 var authCheckTimer = null;
 var notifPollTimer = null;
 var allNotifications = [];
 var isNotifSheetOpen = false;
+
+// Signature canvas state
+var sigCanvas = null;
+var sigCtx = null;
+var sigDrawing = false;
+var sigBgScale = 1;
+var sigBgTranslateX = 0;
+var sigBgTranslateY = 0;
+var sigPinchStartDist = 0;
+var sigPinchStartScale = 1;
+var sigPinchMidX = 0;
+var sigPinchMidY = 0;
+var sigPanStartTX = 0;
+var sigPanStartTY = 0;
 
 function _(key){ return (t[lang]&&t[lang][key])||key; }
 function el(id){ return document.getElementById(id); }
@@ -800,16 +898,11 @@ function apiCall(method, path, body, isFormData) {
   var headers = {};
   if (!isFormData) headers['Content-Type'] = 'application/json';
   if (token) headers['Authorization'] = 'Bearer ' + token;
-
   var opts = { method: method, headers: headers };
   if (body) opts.body = isFormData ? body : JSON.stringify(body);
-
   return fetch(API_BASE + path, opts).then(function(res) {
     return res.json().catch(function() { return null; }).then(function(data) {
-      if (res.status === 401) {
-        forceLogout(_('unauthorized'));
-        throw new Error('Unauthorized');
-      }
+      if (res.status === 401) { forceLogout(_('unauthorized')); throw new Error('Unauthorized'); }
       if (!res.ok) throw new Error((data && data.error) || 'Request failed');
       return data;
     });
@@ -831,11 +924,9 @@ function markNotifRead(id) { return apiCall('POST', '/api/notifications/' + id +
 function fetchLogs() { return apiCall('GET', '/api/logs').catch(function() { return { logs: [] }; }); }
 
 function applyLanguage(){
-  var isRTL = lang === 'ar';
-  document.documentElement.lang = lang;
-  document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+  document.documentElement.lang = 'ar';
+  document.documentElement.dir = 'rtl';
   document.title = _('appName');
-
   el('loginTitle').textContent = _('loginTitle');
   el('loginSubtitle').textContent = _('loginSubtitle');
   el('lblUsername').textContent = _('username');
@@ -844,67 +935,49 @@ function applyLanguage(){
   el('usernameInput').placeholder = _('unamePh');
   el('passwordInput').placeholder = _('pwdPh');
   el('loginError').textContent = _('loginError');
-
   el('appTitle').textContent = _('appTitle');
   el('logoutBtn').textContent = _('logout');
   el('searchInput').placeholder = _('searchPlaceholder');
-
   el('emptyTitle').textContent = _('emptyTitle');
   el('emptyDesc').textContent = _('emptyDesc');
-
   var ed = el('editId').value;
   el('addTitle').textContent = ed ? _('editTitle') : _('addTitle');
   el('submitBtn').textContent = ed ? _('update') : _('save');
-
-  el('lblCustomerName').textContent = _('customerName');
   el('lblStoreName').textContent = _('storeName');
   el('lblPromoter').textContent = _('promoter');
   el('lblRepresentative').textContent = _('representative');
-  el('lblPhone').textContent = _('phone');
   el('lblAddress').textContent = _('address');
   el('lblNotes').textContent = _('notes');
   el('lblImages').textContent = _('images');
   el('img1Label').textContent = _('image1');
   el('img2Label').textContent = _('image2');
-  el('customerNameInput').placeholder = _('custPh');
   el('storeNameInput').placeholder = _('storePh');
   el('promoterInput').placeholder = _('promoPh');
   el('representativeInput').placeholder = _('repPh');
-  el('phoneInput').placeholder = _('phonePh');
   el('addressInput').placeholder = _('addrPh');
   el('notesInput').placeholder = _('notesPh');
-
   el('settingsTitle').textContent = _('settingsTitle');
   el('lblTheme').textContent = _('themeLabel');
   el('hintTheme').textContent = _('themeHint');
-  el('lblLang').textContent = _('langLabel');
-  el('hintLang').textContent = _('langHint');
-
-  el('cameraLabel').textContent = _('camera');
   el('galleryLabel').textContent = _('gallery');
   el('cancelImagePick').textContent = _('cancel');
-
   el('logsTitle').textContent = _('logsTitle');
   el('notifTitle').textContent = _('notifications');
   el('notifLoading').textContent = _('notifLoading');
-
-  el('langDropdown').value = lang;
-
   if (el('appShell').style.display === 'block' || el('appShell').style.display === '') {
     renderEntries(entries);
   }
 }
 
-function setLanguage(newLang) {
-  lang = newLang;
-  storage.set('app_lang', lang);
-  applyLanguage();
-}
-
 function applyTheme() {
   document.documentElement.setAttribute('data-theme', theme);
-  el('themeToggle').classList.toggle('active', theme === 'dark');
+  if (theme === 'dark') {
+    el('themeToggle').classList.add('active');
+  } else {
+    el('themeToggle').classList.remove('active');
+  }
 }
+
 function toggleTheme() {
   theme = theme === 'dark' ? 'light' : 'dark';
   storage.set('app_theme', theme);
@@ -921,31 +994,25 @@ function renderEntries(data) {
       '</svg><h3>' + _('emptyTitle') + '</h3><p>' + _('emptyDesc') + '</p></div>';
     return;
   }
-
   list.innerHTML = data.map(function(entry, i) {
     var delay = (i * 0.03).toFixed(2);
-    var name = entry.customer_name || '—';
     var store = entry.store_name || '';
     var promo = entry.promoter || '';
     var rep = entry.representative || '';
-    var phone = entry.phone || '';
     var addr = entry.address || '';
     var notes = entry.notes || '';
     var createdAt = entry.created_at || '';
-
     var detailsParts = [];
     if (promo || rep) detailsParts.push('<span class="entry-row-detail">' +
       (promo ? '<strong>' + _('promoter') + ':</strong> ' + escapeHtml(promo) : '') +
       (promo && rep ? ' · ' : '') +
       (rep ? '<strong>' + _('representative') + ':</strong> ' + escapeHtml(rep) : '') +
       '</span>');
-    if (phone) detailsParts.push('<span class="entry-row-detail"><strong>TEL</strong> ' + escapeHtml(phone) + '</span>');
     if (addr) detailsParts.push('<span class="entry-row-detail"><strong>LOC</strong> ' + escapeHtml(addr) + '</span>');
     if (createdAt) {
       var dateStr = createdAt.replace('T', ' ').substring(0, 16);
       detailsParts.push('<span class="entry-row-detail"><strong>TIM</strong> ' + escapeHtml(dateStr) + '</span>');
     }
-
     var imagesHtml = '';
     if (entry.image1_url || entry.image2_url) {
       imagesHtml = '<div class="entry-row-images">' +
@@ -953,23 +1020,15 @@ function renderEntries(data) {
         (entry.image2_url ? '<img src="' + API_BASE + entry.image2_url + '" alt="" onclick="event.stopPropagation();viewImage(\'' + API_BASE + entry.image2_url + '\')" loading="lazy">' : '') +
         '</div>';
     }
-
     return '<div class="entry-row" style="animation-delay:' + delay + 's">' +
       '<div class="entry-row-top">' +
-        '<div class="entry-row-names">' +
-          '<div class="entry-row-name">' + escapeHtml(name) + (store ? ' <span style="color:var(--text-muted);font-weight:400;font-size:13px">- ' + escapeHtml(store) + '</span>' : '') + '</div>' +
-        '</div>' +
+        '<div class="entry-row-names"><div class="entry-row-name">' + escapeHtml(store) + '</div></div>' +
         '<div class="entry-row-actions">' +
-          '<button class="row-action-btn edit-btn" onclick="event.stopPropagation();openEdit(\'' + entry.id + '\')" aria-label="' + _('editTitle') + '">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
-              '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>' +
-              '<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>' +
-            '</svg>' +
+          '<button class="row-action-btn edit-btn" onclick="event.stopPropagation();openEdit(\'' + entry.id + '\')" type="button">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>' +
           '</button>' +
-          '<button class="row-action-btn del-btn" onclick="event.stopPropagation();handleDelete(\'' + entry.id + '\')" aria-label="' + _('deleteConfirm') + '">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
-              '<polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>' +
-            '</svg>' +
+          '<button class="row-action-btn del-btn" onclick="event.stopPropagation();handleDelete(\'' + entry.id + '\')" type="button">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>' +
           '</button>' +
         '</div>' +
       '</div>' +
@@ -1013,49 +1072,43 @@ function openEdit(id) {
     if (entries[i].id === id) { entry = entries[i]; break; }
   }
   if (!entry) return;
-
   el('editId').value = id;
-  el('customerNameInput').value = entry.customer_name || '';
   el('storeNameInput').value = entry.store_name || '';
   el('promoterInput').value = entry.promoter || '';
   el('representativeInput').value = entry.representative || '';
-  el('phoneInput').value = entry.phone || '';
   el('addressInput').value = entry.address || '';
   el('notesInput').value = entry.notes || '';
-
   el('addTitle').textContent = _('editTitle');
   el('submitBtn').textContent = _('update');
-
   image1File = null;
   image2File = null;
-
+  signatureFile = null;
   var box1 = el('image1Box');
   if (entry.image1_url) {
     box1.innerHTML = '<img src="' + API_BASE + entry.image1_url + '" alt="">';
     box1.setAttribute('data-existing-url', entry.image1_url);
-  } else {
-    resetImageBox(1);
-    box1.removeAttribute('data-existing-url');
-  }
-
+  } else { resetImageBox(1); box1.removeAttribute('data-existing-url'); }
   var box2 = el('image2Box');
   if (entry.image2_url) {
     box2.innerHTML = '<img src="' + API_BASE + entry.image2_url + '" alt="">';
     box2.setAttribute('data-existing-url', entry.image2_url);
+  } else { resetImageBox(2); box2.removeAttribute('data-existing-url'); }
+  if (entry.signature_url) {
+    el('sigPreviewImg').src = API_BASE + entry.signature_url;
+    el('sigPreviewWrap').style.display = 'block';
+    el('openSigBtn').style.display = 'none';
   } else {
-    resetImageBox(2);
-    box2.removeAttribute('data-existing-url');
+    resetSigBox();
   }
-
   openSheet('addOverlay', 'addSheet');
 }
 
+// ── Login ──────────────────────────────────────────────────────────────
 el('loginForm').addEventListener('submit', function(e) {
   e.preventDefault();
   var u = el('usernameInput').value.trim();
   var p = el('passwordInput').value.trim();
   if (!u || !p) return;
-
   showLoading();
   doLogin(u, p).then(function(data) {
     token = data.token;
@@ -1085,9 +1138,7 @@ if (token) {
       startAuthCheck();
       startNotifPolling();
       updateUnreadBadge();
-    } else {
-      forceLogout();
-    }
+    } else { forceLogout(); }
   }).catch(function() {
     el('loginScreen').style.display = 'none';
     el('appShell').style.display = 'block';
@@ -1103,11 +1154,8 @@ function startAuthCheck() {
   authCheckTimer = setInterval(function() {
     if (!token) return;
     checkAuth().then(function(data) {
-      if (!data || !data.valid) {
-        forceLogout(_('accountDeleted'));
-      } else {
-        username = data.username || username;
-      }
+      if (!data || !data.valid) { forceLogout(_('accountDeleted')); }
+      else { username = data.username || username; }
     }).catch(function() {});
   }, 15000);
 }
@@ -1117,9 +1165,7 @@ function startNotifPolling() {
   notifPollTimer = setInterval(function() {
     if (!token) return;
     updateUnreadBadge();
-    if (isNotifSheetOpen) {
-      refreshNotificationsList();
-    }
+    if (isNotifSheetOpen) refreshNotificationsList();
   }, 5000);
 }
 
@@ -1128,24 +1174,16 @@ function updateUnreadBadge() {
   fetchUnreadCount().then(function(data) {
     var count = (data && data.count) || 0;
     var badge = el('notifBadge');
-    if (count > 0) {
-      badge.textContent = count;
-      badge.style.display = 'flex';
-    } else {
-      badge.style.display = 'none';
-    }
+    if (count > 0) { badge.textContent = count; badge.style.display = 'flex'; }
+    else { badge.style.display = 'none'; }
   }).catch(function() {});
 }
 
 function forceLogout(msg) {
-  clearInterval(authCheckTimer);
-  authCheckTimer = null;
-  clearInterval(notifPollTimer);
-  notifPollTimer = null;
-  storage.remove('app_token');
-  storage.remove('app_user');
-  token = null;
-  username = null;
+  clearInterval(authCheckTimer); authCheckTimer = null;
+  clearInterval(notifPollTimer); notifPollTimer = null;
+  storage.remove('app_token'); storage.remove('app_user');
+  token = null; username = null;
   el('appShell').style.display = 'none';
   el('loginScreen').style.display = 'flex';
   el('usernameInput').value = '';
@@ -1154,9 +1192,7 @@ function forceLogout(msg) {
   if (msg) showToast(msg, true);
 }
 
-el('logoutBtn').addEventListener('click', function() {
-  forceLogout();
-});
+el('logoutBtn').addEventListener('click', function() { forceLogout(); });
 
 el('searchBtn').addEventListener('click', function() {
   var bar = el('searchBar');
@@ -1169,11 +1205,9 @@ el('searchBtn').addEventListener('click', function() {
 el('searchInput').addEventListener('input', function(e) {
   var q = e.target.value.toLowerCase();
   var filtered = entries.filter(function(entry) {
-    return (entry.customer_name || '').toLowerCase().indexOf(q) > -1 ||
-           (entry.store_name || '').toLowerCase().indexOf(q) > -1 ||
+    return (entry.store_name || '').toLowerCase().indexOf(q) > -1 ||
            (entry.promoter || '').toLowerCase().indexOf(q) > -1 ||
            (entry.representative || '').toLowerCase().indexOf(q) > -1 ||
-           (entry.phone || '').toLowerCase().indexOf(q) > -1 ||
            (entry.address || '').toLowerCase().indexOf(q) > -1 ||
            (entry.notes || '').toLowerCase().indexOf(q) > -1;
   });
@@ -1188,30 +1222,24 @@ el('addBtn').addEventListener('click', function() {
   openSheet('addOverlay', 'addSheet');
 });
 
-el('addClose').addEventListener('click', function() {
-  closeSheet('addOverlay', 'addSheet');
-  resetAddForm();
-});
-el('addOverlay').addEventListener('click', function() {
-  closeSheet('addOverlay', 'addSheet');
-  resetAddForm();
-});
+el('addClose').addEventListener('click', function() { closeSheet('addOverlay', 'addSheet'); resetAddForm(); });
+el('addOverlay').addEventListener('click', function() { closeSheet('addOverlay', 'addSheet'); resetAddForm(); });
 
 function resetAddForm() {
   el('editId').value = '';
-  el('customerNameInput').value = '';
   el('storeNameInput').value = '';
   el('promoterInput').value = '';
   el('representativeInput').value = '';
-  el('phoneInput').value = '';
   el('addressInput').value = '';
   el('notesInput').value = '';
   el('addTitle').textContent = _('addTitle');
   el('submitBtn').textContent = _('save');
   image1File = null;
   image2File = null;
+  signatureFile = null;
   resetImageBox(1);
   resetImageBox(2);
+  resetSigBox();
 }
 
 function resetImageBox(num) {
@@ -1222,18 +1250,16 @@ function resetImageBox(num) {
   box.removeAttribute('data-existing-url');
 }
 
-el('image1Box').addEventListener('click', function() {
-  currentImageIndex = 0;
-  el('imageSourcePicker').classList.add('open');
-});
-el('image2Box').addEventListener('click', function() {
-  currentImageIndex = 1;
-  el('imageSourcePicker').classList.add('open');
-});
+function resetSigBox() {
+  signatureFile = null;
+  el('sigPreviewWrap').style.display = 'none';
+  el('sigPreviewImg').src = '';
+  el('openSigBtn').style.display = '';
+}
 
-el('cancelImagePick').addEventListener('click', function() {
-  el('imageSourcePicker').classList.remove('open');
-});
+el('image1Box').addEventListener('click', function() { currentImageIndex = 0; el('imageSourcePicker').classList.add('open'); });
+el('image2Box').addEventListener('click', function() { currentImageIndex = 1; el('imageSourcePicker').classList.add('open'); });
+el('cancelImagePick').addEventListener('click', function() { el('imageSourcePicker').classList.remove('open'); });
 el('imageSourcePicker').addEventListener('click', function(e) {
   if (e.target === el('imageSourcePicker')) el('imageSourcePicker').classList.remove('open');
 });
@@ -1251,90 +1277,221 @@ function handleImageFile(file) {
   else image2File = file;
 }
 
-// 1. Grab the camera input element
-var camInput = document.getElementById('cameraInput');
-
-// 2. Read the device data (User Agent)
-var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-// 3. Build the if/else fallback logic
-if (/android/i.test(userAgent)) {
-  // Check if it's an older Android version (Android 9 or below)
-  var isOldAndroid = /Android [1-9](\.[0-9]+)?;/i.test(userAgent);
-  
-  if (isOldAndroid) {
-    // Apply legacy capture for older phones
-    camInput.setAttribute('capture', 'camera');
-  } else {
-    // Apply modern capture for newer phones
-    camInput.setAttribute('capture', 'environment');
-  }
-} else {
-  // Default to modern standard for iOS or anything else
-  camInput.setAttribute('capture', 'environment');
-}
-
-// Force the clicks via JavaScript to bypass mobile intent blocks
-el('cameraLabelBtn').addEventListener('click', function(e) {
-  e.preventDefault();
-  el('cameraInput').click();
-});
-// Force the clicks via JavaScript to bypass mobile intent blocks
-el('cameraLabelBtn').addEventListener('click', function(e) {
-  e.preventDefault();
-  el('cameraInput').click();
-});
-
-el('galleryLabelBtn').addEventListener('click', function(e) {
-  e.preventDefault();
-  el('galleryInput').click();
-});
-
-// Handle the files when they are selected
-el('cameraInput').addEventListener('change', function(e) {
-  if (e.target.files && e.target.files[0]) handleImageFile(e.target.files[0]);
-  el('imageSourcePicker').classList.remove('open');
-  e.target.value = '';
-});
-
+el('galleryLabelBtn').addEventListener('click', function(e) { e.preventDefault(); el('galleryInput').click(); });
 el('galleryInput').addEventListener('change', function(e) {
   if (e.target.files && e.target.files[0]) handleImageFile(e.target.files[0]);
   el('imageSourcePicker').classList.remove('open');
   e.target.value = '';
 });
 
+// ── Signature canvas ───────────────────────────────────────────────────
+function applyPaperTransform() {
+  el('sigPaperWrap').style.transform =
+    'translate(calc(-50% + ' + sigBgTranslateX + 'px), calc(-50% + ' + sigBgTranslateY + 'px)) scale(' + sigBgScale + ')';
+}
+
+function initSigCanvas() {
+  sigCanvas = el('sigCanvas');
+  sigCtx = sigCanvas.getContext('2d');
+  var wrap = el('sigCanvasWrap');
+  var img = el('sigBgImg');
+  var wrapW = wrap.clientWidth;
+  var wrapH = wrap.clientHeight;
+  var natW = img.naturalWidth || wrapW;
+  var natH = img.naturalHeight || wrapH;
+  var ratio = natW / natH;
+  var paperW, paperH;
+  if (wrapW / wrapH > ratio) {
+    paperH = wrapH * 0.88;
+    paperW = paperH * ratio;
+  } else {
+    paperW = wrapW * 0.88;
+    paperH = paperW / ratio;
+  }
+  var paperWrap = el('sigPaperWrap');
+  paperWrap.style.width = Math.round(paperW) + 'px';
+  paperWrap.style.height = Math.round(paperH) + 'px';
+  sigCanvas.width = Math.round(paperW);
+  sigCanvas.height = Math.round(paperH);
+  sigCtx.strokeStyle = '#1e293b';
+  sigCtx.lineWidth = 2.5;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+  sigBgScale = 1;
+  sigBgTranslateX = 0;
+  sigBgTranslateY = 0;
+  applyPaperTransform();
+}
+
+function clearSigCanvas() {
+  if (!sigCtx) return;
+  sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+}
+
+function getSigPos(e) {
+  var paperRect = el('sigPaperWrap').getBoundingClientRect();
+  var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: (clientX - paperRect.left) * sigCanvas.width / paperRect.width,
+    y: (clientY - paperRect.top) * sigCanvas.height / paperRect.height
+  };
+}
+
+el('openSigBtn').addEventListener('click', function() {
+  el('sigOverlay').classList.add('open');
+  requestAnimationFrame(function() {
+    initSigCanvas();
+    clearSigCanvas();
+  });
+});
+
+el('sigClose').addEventListener('click', function() {
+  el('sigOverlay').classList.remove('open');
+});
+
+el('sigClearBtn').addEventListener('click', function() {
+  clearSigCanvas();
+});
+
+el('sigSave').addEventListener('click', function() {
+  if (!sigCanvas) return;
+  var composite = document.createElement('canvas');
+  composite.width = sigCanvas.width;
+  composite.height = sigCanvas.height;
+  var ctx = composite.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, composite.width, composite.height);
+  var bgImg = new Image();
+  bgImg.crossOrigin = 'anonymous';
+  bgImg.onload = function() {
+    ctx.drawImage(bgImg, 0, 0, composite.width, composite.height);
+    ctx.drawImage(sigCanvas, 0, 0);
+    composite.toBlob(function(blob) {
+      signatureFile = blob;
+      var url = URL.createObjectURL(blob);
+      el('sigPreviewImg').src = url;
+      el('sigPreviewWrap').style.display = 'block';
+      el('openSigBtn').style.display = 'none';
+      el('sigOverlay').classList.remove('open');
+    }, 'image/png');
+  };
+  bgImg.onerror = function() {
+    ctx.drawImage(sigCanvas, 0, 0);
+    composite.toBlob(function(blob) {
+      signatureFile = blob;
+      var url = URL.createObjectURL(blob);
+      el('sigPreviewImg').src = url;
+      el('sigPreviewWrap').style.display = 'block';
+      el('openSigBtn').style.display = 'none';
+      el('sigOverlay').classList.remove('open');
+    }, 'image/png');
+  };
+  bgImg.src = 'https://raw.githubusercontent.com/minicraft764/ER/refs/heads/main/sign.jpeg';
+});
+
+el('sigPreviewClear').addEventListener('click', function() {
+  resetSigBox();
+});
+
+// Touch drawing — 1 finger draws, 2 fingers pinch-zoom + pan the paper
+el('sigCanvasWrap').addEventListener('touchstart', function(e) {
+  e.preventDefault();
+  if (e.touches.length === 2) {
+    sigDrawing = false;
+    sigPinchStartDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    sigPinchStartScale = sigBgScale;
+    sigPinchMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    sigPinchMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    sigPanStartTX = sigBgTranslateX;
+    sigPanStartTY = sigBgTranslateY;
+    return;
+  }
+  sigDrawing = true;
+  var pos = getSigPos(e);
+  sigCtx.beginPath();
+  sigCtx.moveTo(pos.x, pos.y);
+}, { passive: false });
+
+el('sigCanvasWrap').addEventListener('touchmove', function(e) {
+  e.preventDefault();
+  if (e.touches.length === 2) {
+    var dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    sigBgScale = Math.min(5, Math.max(0.2, sigPinchStartScale * (dist / sigPinchStartDist)));
+    var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    sigBgTranslateX = sigPanStartTX + (midX - sigPinchMidX);
+    sigBgTranslateY = sigPanStartTY + (midY - sigPinchMidY);
+    applyPaperTransform();
+    return;
+  }
+  if (!sigDrawing) return;
+  var pos = getSigPos(e);
+  sigCtx.lineTo(pos.x, pos.y);
+  sigCtx.stroke();
+  sigCtx.beginPath();
+  sigCtx.moveTo(pos.x, pos.y);
+}, { passive: false });
+
+el('sigCanvasWrap').addEventListener('touchend', function(e) {
+  e.preventDefault();
+  if (e.touches.length < 2) {
+    sigPinchStartDist = 0;
+  }
+  if (e.touches.length === 0) {
+    sigDrawing = false;
+    sigCtx.beginPath();
+  }
+}, { passive: false });
+
+// Mouse drawing (for testing on desktop)
+el('sigCanvas').addEventListener('mousedown', function(e) {
+  sigDrawing = true;
+  var pos = getSigPos(e);
+  sigCtx.beginPath();
+  sigCtx.moveTo(pos.x, pos.y);
+});
+el('sigCanvas').addEventListener('mousemove', function(e) {
+  if (!sigDrawing) return;
+  var pos = getSigPos(e);
+  sigCtx.lineTo(pos.x, pos.y);
+  sigCtx.stroke();
+  sigCtx.beginPath();
+  sigCtx.moveTo(pos.x, pos.y);
+});
+el('sigCanvas').addEventListener('mouseup', function() { sigDrawing = false; sigCtx.beginPath(); });
+el('sigCanvas').addEventListener('mouseleave', function() { sigDrawing = false; });
+
+// ── Form submit ────────────────────────────────────────────────────────
 el('addForm').addEventListener('submit', function(e) {
   e.preventDefault();
   var editId = el('editId').value.trim();
-
-  var customer_name = el('customerNameInput').value.trim();
   var store_name = el('storeNameInput').value.trim();
   var promoter = el('promoterInput').value.trim();
   var representative = el('representativeInput').value.trim();
-  var phone = el('phoneInput').value.trim();
   var address = el('addressInput').value.trim();
   var notes = el('notesInput').value.trim();
-
-  if (!customer_name || !store_name || !promoter || !representative || !phone) {
+  if (!store_name || !promoter || !representative) {
     showToast(_('fieldRequired'), true);
     return;
   }
-
   showLoading();
-
   var fd = new FormData();
-  fd.append('customer_name', customer_name);
   fd.append('store_name', store_name);
   fd.append('promoter', promoter);
   fd.append('representative', representative);
-  fd.append('phone', phone);
   fd.append('address', address);
   fd.append('notes', notes);
   if (image1File) fd.append('image1', image1File);
   if (image2File) fd.append('image2', image2File);
-
+  if (signatureFile) fd.append('signature', signatureFile, 'signature.png');
   var promise = editId ? updateEntry(editId, fd) : createEntry(fd);
-
   promise.then(function() {
     showToast(editId ? _('updateSuccess') : _('addSuccess'));
     closeSheet('addOverlay', 'addSheet');
@@ -1345,47 +1502,26 @@ el('addForm').addEventListener('submit', function(e) {
   }).finally(hideLoading);
 });
 
-// 1. Open the Settings Menu smoothly
-el('fabSettings').addEventListener('click', function() {
-  // Sync the dropdown and toggle visuals before opening
-  el('langDropdown').value = lang;
-  el('themeToggle').classList.toggle('active', theme === 'dark');
-  
+// ── Settings FAB ───────────────────────────────────────────────────────
+el('fabSettings').addEventListener('click', function(e) {
+  applyTheme();
   openSheet('settingsOverlay', 'settingsSheet');
 });
 
-// 2. Close the Settings Menu
-el('settingsClose').addEventListener('click', function() {
-  closeSheet('settingsOverlay', 'settingsSheet');
-});
-el('settingsOverlay').addEventListener('click', function() {
-  closeSheet('settingsOverlay', 'settingsSheet');
+el('settingsClose').addEventListener('click', function() { closeSheet('settingsOverlay', 'settingsSheet'); });
+el('settingsOverlay').addEventListener('click', function() { closeSheet('settingsOverlay', 'settingsSheet'); });
+
+// ── Theme toggle — explicit click handler ──────────────────────────────
+el('themeToggle').addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  toggleTheme();
 });
 
-// 3. Handle Theme Toggle (Saves automatically to LocalStorage)
-el('themeToggle').addEventListener('click', function() {
-  toggleTheme(); // This function already updates the UI and saves the choice
-});
-
-// 4. Handle Language Dropdown (Saves and forces a full app refresh)
-el('langDropdown').addEventListener('change', function(e) {
-  // Save the new language to the phone's storage
-  storage.set('app_lang', e.target.value); 
-  
-  // Force the browser to instantly reload the page to apply the language cleanly
-  window.location.reload(); 
-});
-
-el('cmdBtn').addEventListener('click', function() {
-  openSheet('logsOverlay', 'logsSheet');
-  loadLogs();
-});
-el('logsClose').addEventListener('click', function() {
-  closeSheet('logsOverlay', 'logsSheet');
-});
-el('logsOverlay').addEventListener('click', function() {
-  closeSheet('logsOverlay', 'logsSheet');
-});
+// ── Logs ───────────────────────────────────────────────────────────────
+el('cmdBtn').addEventListener('click', function() { openSheet('logsOverlay', 'logsSheet'); loadLogs(); });
+el('logsClose').addEventListener('click', function() { closeSheet('logsOverlay', 'logsSheet'); });
+el('logsOverlay').addEventListener('click', function() { closeSheet('logsOverlay', 'logsSheet'); });
 
 function loadLogs() {
   el('logsLoading').style.display = 'block';
@@ -1398,10 +1534,8 @@ function loadLogs() {
       return;
     }
     var actionLabels = {
-      LOGIN_SUCCESS: _('logLoginOK'),
-      LOGIN_FAILED: _('logLoginFail'),
-      USER_ADDED: _('logUserAdded'),
-      USER_DELETED: _('logUserDeleted')
+      LOGIN_SUCCESS: _('logLoginOK'), LOGIN_FAILED: _('logLoginFail'),
+      USER_ADDED: _('logUserAdded'), USER_DELETED: _('logUserDeleted')
     };
     content.innerHTML = logs.map(function(log) {
       var ts = (log.timestamp || '').replace('T', ' ').substring(0, 19);
@@ -1418,38 +1552,28 @@ function loadLogs() {
     }).join('');
   }).catch(function(err) {
     el('logsContent').innerHTML = '<p style="text-align:center;color:var(--danger);padding:20px">' + escapeHtml(err.message) + '</p>';
-  }).finally(function() {
-    el('logsLoading').style.display = 'none';
-  });
+  }).finally(function() { el('logsLoading').style.display = 'none'; });
 }
 
+// ── Notifications ──────────────────────────────────────────────────────
 el('notifBtn').addEventListener('click', function() {
   isNotifSheetOpen = true;
   openSheet('notifOverlay', 'notifSheet');
   loadNotifications();
 });
-el('notifClose').addEventListener('click', function() {
-  isNotifSheetOpen = false;
-  closeSheet('notifOverlay', 'notifSheet');
-});
-el('notifOverlay').addEventListener('click', function() {
-  isNotifSheetOpen = false;
-  closeSheet('notifOverlay', 'notifSheet');
-});
+el('notifClose').addEventListener('click', function() { isNotifSheetOpen = false; closeSheet('notifOverlay', 'notifSheet'); });
+el('notifOverlay').addEventListener('click', function() { isNotifSheetOpen = false; closeSheet('notifOverlay', 'notifSheet'); });
 
 function loadNotifications() {
   el('notifLoading').style.display = 'block';
   el('notifLoading').textContent = _('notifLoading');
-
   fetchNotifications().then(function(data) {
     allNotifications = (data && data.notifications) || [];
     allNotifications.reverse();
     renderNotificationsList();
   }).catch(function(err) {
     el('notifContent').innerHTML = '<p style="text-align:center;color:var(--danger);padding:20px">' + escapeHtml(err.message) + '</p>';
-  }).finally(function() {
-    el('notifLoading').style.display = 'none';
-  });
+  }).finally(function() { el('notifLoading').style.display = 'none'; });
 }
 
 function refreshNotificationsList() {
@@ -1462,59 +1586,37 @@ function refreshNotificationsList() {
 
 function renderNotificationsList() {
   var content = el('notifContent');
-  
   if (allNotifications.length === 0) {
     content.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px">' + _('notifEmpty') + '</p>';
     return;
   }
-
   var placeholder = content.querySelector('p');
-  if (placeholder) {
-    placeholder.remove();
-  }
-
+  if (placeholder) placeholder.remove();
   var currUser = storage.get('app_user');
   var addedNewMessage = false;
-
   allNotifications.forEach(function(n) {
-    if (content.querySelector('[data-id="' + n.id + '"]')) {
-      return; 
-    }
-
-    addedNewMessage = true; 
-
+    if (content.querySelector('[data-id="' + n.id + '"]')) return;
+    addedNewMessage = true;
     var isSent = n.sender === currUser;
     var msgClass = isSent ? 'sent' : 'received';
     var ts = (n.timestamp || '').replace('T', ' ').substring(0, 16);
     var hasDetails = n.email || n.location || (n.image_urls && n.image_urls.length > 0) || n.audio_url;
-
     var div = document.createElement('div');
     div.className = 'chat-msg ' + msgClass;
     div.setAttribute('data-id', n.id);
     div.onclick = function() { toggleNotifExpand(this, n.id); };
-
-var html = '';
-    if (!isSent) {
-      html += '<div class="chat-sender">' + escapeHtml(n.sender || 'Admin') + '</div>';
-    }
+    var html = '';
+    if (!isSent) html += '<div class="chat-sender">' + escapeHtml(n.sender || 'Admin') + '</div>';
     html += '<div class="chat-bubble">';
-    
-    // FIX 1: Force the placeholder to push the bubble open to at least 260px
     if (n.text) {
       html += '<div>' + escapeHtml(n.text).replace(/\n/g, '<br>') + '</div>';
     } else {
-      html += '<div style="min-width: 260px; font-style: italic; color: var(--text-muted); font-size: 13px;">' + 
-              (n.audio_url ? '🎵 رسالة صوتية' : '📎 مرفق') + 
-              '</div>';
+      html += '<div style="min-width:260px;font-style:italic;color:var(--text-muted);font-size:13px;">' +
+              (n.audio_url ? '🎵 رسالة صوتية' : '📎 مرفق') + '</div>';
     }
-
     html += '<div class="chat-expanding-content">';
-    if (n.email) {
-      html += '<div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">' + escapeHtml(n.email) + '</div></div>';
-    }
-    if (n.location) {
-      html += '<div class="detail-row"><div class="detail-label">Location</div><div class="detail-value">' + escapeHtml(n.location) + '</div></div>';
-    }
+    if (n.email) html += '<div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">' + escapeHtml(n.email) + '</div></div>';
+    if (n.location) html += '<div class="detail-row"><div class="detail-label">Location</div><div class="detail-value">' + escapeHtml(n.location) + '</div></div>';
     if (n.image_urls && n.image_urls.length > 0) {
       html += '<div class="detail-row"><div class="detail-label">Images</div><div class="chat-images">';
       n.image_urls.forEach(function(img) {
@@ -1523,67 +1625,35 @@ var html = '';
       html += '</div></div>';
     }
     if (n.audio_url) {
-      // FIX 2: Removed "width: 100%" and replaced it with strict pixel dimensions (260px)
-      html += '<div class="detail-row"><div class="detail-label">Audio</div><div class="chat-audio" onclick="event.stopPropagation();"><audio controls preload="auto" style="width: 260px; min-width: 260px; height: 50px;"><source src="' + API_BASE + n.audio_url + '" type="audio/mpeg"><source src="' + API_BASE + n.audio_url + '" type="audio/wav"><source src="' + API_BASE + n.audio_url + '" type="audio/ogg"></audio></div></div>';
+      html += '<div class="detail-row"><div class="detail-label">Audio</div><div class="chat-audio" onclick="event.stopPropagation();"><audio controls preload="auto" style="width:260px;min-width:260px;height:50px;"><source src="' + API_BASE + n.audio_url + '" type="audio/mpeg"><source src="' + API_BASE + n.audio_url + '" type="audio/wav"><source src="' + API_BASE + n.audio_url + '" type="audio/ogg"></audio></div></div>';
     }
     html += '</div>';
-    if (hasDetails) {
-      html += '<div class="chat-expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg> Tap to expand</div>';
-    }
+    if (hasDetails) html += '<div class="chat-expand-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"></path></svg> Tap to expand</div>';
     html += '</div>';
     html += '<div class="chat-time">' + ts + '</div>';
-
     div.innerHTML = html;
-    
     content.appendChild(div);
   });
-
-  if (addedNewMessage) {
-    setTimeout(function() {
-      content.scrollTop = content.scrollHeight;
-    }, 50);
-  }
+  if (addedNewMessage) setTimeout(function() { content.scrollTop = content.scrollHeight; }, 50);
 }
 
-function toggleNotifExpand(el, notifId) {
-  var wasExpanded = el.classList.contains('expanded');
+function toggleNotifExpand(elem, notifId) {
+  var wasExpanded = elem.classList.contains('expanded');
   document.querySelectorAll('.chat-msg').forEach(function(m) { m.classList.remove('expanded'); });
-  if (!wasExpanded) {
-    el.classList.add('expanded');
-    markSingleNotifRead(notifId);
-  }
+  if (!wasExpanded) { elem.classList.add('expanded'); markSingleNotifRead(notifId); }
 }
 
 function markSingleNotifRead(notifId) {
   markNotifRead(notifId).then(function() {
-    allNotifications.forEach(function(n) {
-      if (n.id === notifId) n.is_read = true;
-    });
+    allNotifications.forEach(function(n) { if (n.id === notifId) n.is_read = true; });
     updateUnreadBadge();
   }).catch(function(e) { console.error('Failed to mark read:', e); });
 }
 
-
-el('imageViewerClose').addEventListener('click', function() {
-  el('imageViewer').classList.remove('open');
-});
-el('imageViewer').addEventListener('click', function(e) {
-  if (e.target === el('imageViewer')) el('imageViewer').classList.remove('open');
-});
+el('imageViewerClose').addEventListener('click', function() { el('imageViewer').classList.remove('open'); });
+el('imageViewer').addEventListener('click', function(e) { if (e.target === el('imageViewer')) el('imageViewer').classList.remove('open'); });
 
 applyTheme();
 applyLanguage();
 </script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').then((registration) => {
-        console.log('ServiceWorker registration successful');
-      }).catch((err) => {
-        console.log('ServiceWorker registration failed: ', err);
-      });
-    });
-  }
-</script>
-</body>
-</html>
+</body></html>
