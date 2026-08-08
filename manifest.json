@@ -1,25 +1,21 @@
 {
-  "name": "مزامنة البيانات",
-  "short_name": "مزامنة البيانات",
-  "description": "تطبيق مزامنة البيانات",
-  "start_url": "/ER/",
-  "scope": "/ER/",
-  "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "short_name": "ER",
+  "name": "ER Application",
   "icons": [
-    {
-      "src": "/ER/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
     },
     {
-      "src": "/ER/icon-512.png",
-      "sizes": "512x512",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable any"
     }
-  ]
+  ],
+  "start_url": "/iphone",
+  "background_color": "#172D6D",
+  "theme_color": "#0000",
+  "display_override": [
+    "fullscreen"
+  ],
+  "display": "fullscreen",
+  "orientation": "portrait-primary"
 }
