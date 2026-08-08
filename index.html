@@ -1,45 +1,14 @@
-<!DOCTYPE html>
-<html data-theme="light" dir="rtl" lang="ar">
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-
-<title>مزامنة البيانات</title>
-
+<!DOCTYPE html><html data-theme="light" dir="rtl" lang="ar"><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"><style>body {transition: opacity ease-in 0.2s; }
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; }
+</style>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<title>ER Application</title>
 <link rel="manifest" href="/manifest.json">
-
-<meta name="theme-color" content="#ffffff">
-
-<meta name="mobile-web-app-capable" content="yes">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="مزامنة البيانات">
-
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
-
+<link rel="icon" href="https://raw.githubusercontent.com/minicraft764/ER/refs/heads/main/ER1-modified.png" type="image/png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/minicraft764/ER/refs/heads/main/ER1-modified.png">
 <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
-body {
-    transition: opacity ease-in 0.2s;
-}
-
-body[unresolved] {
-    opacity: 0;
-    display: block;
-    overflow: hidden;
-    position: relative;
-}
-
-*, *::before, *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-  
 :root{
   --primary:#2563eb;--primary-light:#3b82f6;--primary-dark:#1d4ed8;
   --secondary:#10b981;--secondary-dark:#059669;
@@ -804,11 +773,15 @@ img{display:block;max-width:100%}
 </div>
 <div class="field-group">
 <label id="lblPromoter">المروج</label>
-<input id="promoterInput" placeholder="أدخل المروج" required type="text">
+<select id="promoterInput" required style="width:100%;padding:13px 14px;border:2px solid var(--input-border);border-radius:var(--radius);font-size:15px;background:var(--input-bg);color:var(--text);transition:border-color 0.2s,box-shadow 0.2s;">
+  <option value="">اختر المروج</option>
+</select>
 </div>
 <div class="field-group">
 <label id="lblRepresentative">المندوب</label>
-<input id="representativeInput" placeholder="أدخل المندوب" required type="text">
+<select id="representativeInput" required style="width:100%;padding:13px 14px;border:2px solid var(--input-border);border-radius:var(--radius);font-size:15px;background:var(--input-bg);color:var(--text);transition:border-color 0.2s,box-shadow 0.2s;">
+  <option value="">اختر المندوب</option>
+</select>
 </div>
 <div class="field-group">
 <label id="lblAddress">العنوان</label>
@@ -928,7 +901,7 @@ var storage = {
 
 var t = {
   ar: {
-    appName:'مزامنة البيانات',appTitle:'البيانات',
+    appName:'ER Application',appTitle:'ER',
     loginTitle:'مرحباً بك',loginSubtitle:'سجل دخولك للمتابعة',
     username:'اسم المستخدم',password:'كلمة المرور',loginBtn:'دخول',
     unamePh:'أدخل اسم المستخدم',pwdPh:'أدخل كلمة المرور',
@@ -959,7 +932,7 @@ var t = {
     connectionError:'خطأ في الاتصال',
   },
   en: {
-    appName:'Data Sync',appTitle:'Entries',
+    appName:'ER Application',appTitle:'ER',
     loginTitle:'Welcome',loginSubtitle:'Sign in to continue',
     username:'Username',password:'Password',loginBtn:'Sign In',
     unamePh:'Enter username',pwdPh:'Enter password',
@@ -1406,8 +1379,6 @@ function openEdit(id) {
   if (!entry) return;
   el('editId').value = id;
   el('storeNameInput').value = entry.store_name || '';
-  el('promoterInput').value = entry.promoter || '';
-  el('representativeInput').value = entry.representative || '';
   el('addressInput').value = entry.address || '';
   el('notesInput').value = entry.notes || '';
   el('addTitle').textContent = _('editTitle');
@@ -1415,6 +1386,11 @@ function openEdit(id) {
   image1File = null;
   image2File = null;
   signatureFile = null;
+  var promoterValue = entry.promoter || '';
+  var representativeValue = entry.representative || '';
+  populateUserSelect(el('promoterInput'), promoterValue).then(function() {
+    populateUserSelect(el('representativeInput'), representativeValue);
+  });
   var box1 = el('image1Box');
   if (entry.image1_url) {
     box1.innerHTML = '<img src="' + API_BASE + entry.image1_url + '" alt="">';
@@ -1553,11 +1529,62 @@ el('addBtn').addEventListener('click', function() {
   el('editId').value = '';
   el('addTitle').textContent = _('addTitle');
   el('submitBtn').textContent = _('save');
+  populateUserSelect(el('promoterInput'), '');
+  populateUserSelect(el('representativeInput'), '');
   openSheet('addOverlay', 'addSheet');
 });
 
 el('addClose').addEventListener('click', function() { closeSheet('addOverlay', 'addSheet'); resetAddForm(); });
 el('addOverlay').addEventListener('click', function() { closeSheet('addOverlay', 'addSheet'); resetAddForm(); });
+
+function fetchUsers() {
+  return fetch(API_BASE + '/api/users', {
+    headers: { 'Accept': 'application/json' }
+  }).then(function(res) {
+    if (!res.ok) return Promise.reject(new Error('Failed to load users'));
+    return res.json();
+  }).then(function(users) {
+    return Array.isArray(users) ? users : [];
+  });
+}
+
+function populateUserSelect(selectEl, selectedValue) {
+  if (!selectEl) return Promise.resolve();
+  var currentValue = (selectedValue || '').trim();
+  return fetchUsers().then(function(users) {
+    var options = ['<option value="">اختر...</option>'];
+    var seen = {};
+    users.forEach(function(u) {
+      var name = (u && u.username) ? String(u.username).trim() : '';
+      if (!name || seen[name]) return;
+      seen[name] = true;
+      options.push('<option value="' + escapeHtml(name) + '">' + escapeHtml(name) + '</option>');
+    });
+    if (currentValue && !seen[currentValue]) {
+      options.push('<option value="' + escapeHtml(currentValue) + '" selected>' + escapeHtml(currentValue) + '</option>');
+    }
+    selectEl.innerHTML = options.join('');
+    if (currentValue) {
+      if (Array.from(selectEl.options).some(function(opt) { return opt.value === currentValue; })) {
+        selectEl.value = currentValue;
+      } else {
+        selectEl.value = '';
+      }
+    } else {
+      selectEl.value = '';
+    }
+  }).catch(function() {
+    selectEl.innerHTML = '<option value="">اختر...</option>';
+    if (currentValue) {
+      var custom = document.createElement('option');
+      custom.value = currentValue;
+      custom.textContent = currentValue;
+      custom.selected = true;
+      selectEl.appendChild(custom);
+    }
+    selectEl.value = currentValue || '';
+  });
+}
 
 function resetAddForm() {
   el('editId').value = '';
@@ -2015,5 +2042,13 @@ el('imageViewer').addEventListener('click', function(e) { if (e.target === el('i
 
 applyTheme();
 applyLanguage();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(error) {
+      console.warn('PWA service worker registration failed:', error);
+    });
+  });
+}
 </script>
 </body></html>
